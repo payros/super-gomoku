@@ -30,6 +30,7 @@
 28: BestTeam
 29: TerryRandom
 
+
 # Round 1
 
 1: LazyMinMax
@@ -49,8 +50,6 @@
 29: TerryRandom
 
 
-
-
 # Round 2
 
 1: LazyMinMax
@@ -62,7 +61,8 @@
 26: KunkelOwen
 27: Team0
 
-# Round 3
+
+# Semi-Final
 
 3: PurplePeopleEater
 7: Notemotives
@@ -70,35 +70,12 @@
 26: KunkelOwen
 
 
-
-# Round 4
-7: Notemotives
-26: KunkelOwen
-
 # Final
 
 7: Notemotives
 26: KunkelOwen
 
-Winner:
+
+# Winner
+
 26: KunkelOwen
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
