@@ -1,12 +1,15 @@
 # tic-tac-toe and gomoku
 Web-based UI for Gomoku and Tic-Tac-Toe, implemented in Haskell.
-Will allow Gomoku and Tic-Tac-Toe to be played in three modes:
 
-* Human X Human
-* Human X Bot
-* Bot X Bot
+When Completed, this project will let users:
 
-Will also allow the user to define the board dimensions and number of aligned pieces needed to win.
+* Play Gomoku and Tic-Tac-Toe in three modes:
+
+  * Human X Human
+  * Human X Bot
+  * Bot X Bot
+
+* Define the board dimensions and number of aligned pieces needed to win.
 
 # How to build: 
 
