@@ -1,0 +1,81 @@
+# Shuffled Players
+
+1: LazyMinMax
+2: Zest
+3: PurplePeopleEater
+4: HeadlessChicken
+5: SpencerC
+6: Lambda
+7: Notemotives
+8: TeamSinister
+9: MokuWizard
+10: Theta
+11: Yada
+12: Rooster
+13: Mugatu
+14: Lay
+15: BlindGuess
+16: JoshLee
+17: Mikey
+18: Kaa
+19: GigaBot
+20: SashankMichael
+21: Saturn
+22: Fauda
+23: Sigma
+24: Hybrid
+25: Kevin
+26: KunkelOwen
+27: Team0
+28: BestTeam
+29: TerryRandom
+
+
+# Round 1
+
+1: LazyMinMax
+3: PurplePeopleEater
+6: Lambda
+7: Notemotives
+9: MokuWizard
+12: Rooster
+13: Mugatu
+15: BlindGuess
+17: Mikey
+20: SashankMichael
+21: Saturn
+24: Hybrid
+26: KunkelOwen
+27: Team0
+29: TerryRandom
+
+
+# Round 2
+
+1: LazyMinMax
+3: PurplePeopleEater
+7: Notemotives
+13: Mugatu
+15: BlindGuess
+20: SashankMichael
+26: KunkelOwen
+27: Team0
+
+
+# Semi-Final
+
+3: PurplePeopleEater
+7: Notemotives
+15: BlindGuess
+26: KunkelOwen
+
+
+# Final
+
+7: Notemotives
+26: KunkelOwen
+
+
+# Winner
+
+26: KunkelOwen

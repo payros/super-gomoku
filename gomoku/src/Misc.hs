@@ -2,6 +2,7 @@ module Misc where
 
 import System.IO (hFlush, stdout, getLine)
 
+
 import qualified Control.Monad
 
 foldM :: (Monad m) => (b -> a -> m b) -> b ->  [a] -> m b

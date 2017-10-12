@@ -5,22 +5,23 @@ import Checks
 import Misc
 import Players
 
-import Player.BestNext    (playerBestNext )
-import Player.Human       (playerHuman    )
-import Player.Computer    (playerComputer )
-
+import Control.Concurrent
 import System.Exit
 import System.Environment
 import Control.Timeout
 import Data.Time.Units (Second)
 import Data.List  (lookup)
 
+
+
+
+
 main :: IO ()
 main = do
     (player1,player2) <-  getArgs >>= getPlayers
     putStrLn "This is the Gomoku game."
-    rounds  <- prompt "How many rounds should we play?"
-    score   <- playRounds (read rounds) player1  player2
+    -- rounds  <- prompt "How many rounds should we play?"
+    score   <- playRounds 5 player1  player2
     putStrLn $ showFinalScore score
 
 
@@ -50,6 +51,7 @@ playRound p1 p2 score i = do
    putStrLn ("Score:: " ++ showScore score)
    putStrLn ("Round " ++ show i ++ "!")
    putStrLn ((if (i `mod` 2 == 0) then show p2 else show p1)  ++ " plays first")
+   if i /= 1 then putStrLn ("Ready for round " ++ show i ++ "? [Y/N]") >> getLine >> return () else return ()
    result <- if (i `mod` 2 == 0) then play p2 p1 emptyBoard else play p1 p2 emptyBoard
    case result of
       TimeOut p p' -> putStrLn (show p ++ " timed out after 30sec!\n\n") >> return (incr p' score)
@@ -65,10 +67,11 @@ play pi1@(PI p1 t1 _) pi2 board = do
     Nothing   -> return $ TimeOut pi1 pi2
     Just move ->
       case putMaybe board t1 move of
-        Nothing -> putStrLn "Invalid move." >> return (Invalid pi1 pi2)
+        Nothing -> putStrLn ("Invalid move. " ++ show move) >> return (Invalid pi1 pi2)
         Just b  -> if tileWins b t1
                       then putStrLn (showWinningBoard b t1) >> return (Wins pi1)
                       else do putStrLn $ showBoardNew move b
+                              -- threadDelay 100000
                               if checkFull b
                                  then return Tie
                                  else play pi2 pi1 b
