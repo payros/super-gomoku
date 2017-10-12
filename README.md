@@ -9,12 +9,4 @@ When Completed, this project will let users:
   * Human X Bot
   * Bot X Bot
 
-* Define the board dimensions and number of aligned pieces needed to win.
-
-# How to build: 
-
-```
-git clone https://github.com/nikivazou/tic-tac-toe.git
-cd tic-tac-toe/classic
-stack install
-```
+* Define the board dimensions and number of aligned pieces needed to win
