@@ -6,12 +6,12 @@ author:              nikivazou
 maintainer:          nikivazou@gmail.com
 category:            Game
 build-type:          Simple
-extra-source-files:  ChangeLog.md, README.md
+extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
 executable gomoku
-  main-is:             Gomoku.hs
-  build-depends:       base >=4.9 && <4.10, random >=1.1 && <1.2, time-out, time-units, random-shuffle
+  main-is:             Server.hs
+  build-depends:       base >=4.9 && <4.10, random >=1.1 && <1.2, time-out, time-units, random-shuffle, yesod, shakespeare
   hs-source-dirs:      src
   other-modules:       Checks,
                        Types,
