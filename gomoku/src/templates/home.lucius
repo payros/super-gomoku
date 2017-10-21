@@ -1,1 +1,100 @@
-/* Page Styles Go Here */
+@borderColor: #eee;
+@bgColor: #f8f8f8;
+@xColor: #9c27b0;
+@winXColor: #ffc107;
+@oColor: #009688;
+@winOColor: #ffeb3b;
+
+
+h1 {
+	font-family: Helvetica, sans-serif;
+	text-align: center;
+	font-size:60px;
+	color:#{xColor};
+	span {
+		font-size: 110%;
+    	text-decoration: underline;
+		color:#{oColor};
+	}
+}
+
+table {
+    border-collapse: collapse;
+    margin: 50px auto;
+    box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.1);
+
+	td {
+		border:2px solid #{borderColor};
+		background:#{bgColor};
+		width: 50px;
+    	height: 50px;
+    	font-size: 40px;
+	    font-weight: bold;
+	    font-family: Helvetica;
+	    text-align: center;
+		cursor:pointer;
+		transform: rotateY(0deg);
+		transition: transform 0.25s linear, background 0s 0.125s;	    
+	}
+
+	td.x {
+    	color: #{xColor};
+    	background:#fff;
+    }
+
+    td.o {
+    	color: #{oColor};
+    	background:#fff;
+    }
+
+	td:first-child {
+		border-left:none;
+	}
+
+	td:last-child {
+		border-right:none;
+	}
+
+	tr:first-child > td {
+		border-top:none;
+	}
+
+	tr:last-child > td {
+		border-bottom:none;
+	}
+
+}
+
+table.x-turn {
+	td:not(.o):not(.x):hover {
+		background-color:#{xColor};
+		transform: rotateY(180deg);
+	}
+
+	td:not(.o):not(.x)::before {
+		content:'X';
+		color:#{bgColor};
+		transition: color 0s 0.125s;
+	}
+
+	td:not(.o):not(.x):hover::before {
+		color:#fff;
+	}
+}
+
+table.o-turn {
+	td:not(.o):not(.x):hover {
+		background-color:#{oColor};
+		transform: rotateY(180deg);
+	}
+
+	td:not(.o):not(.x)::before {
+		content:'O';
+		color:#{bgColor};
+		transition: color 0s 0.125s;
+	}
+
+	td:not(.o):not(.x):hover::before {
+		color:#fff;
+	}
+}

@@ -3,8 +3,10 @@
 {-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeFamilies          #-}
 import Yesod
-import Text.Lucius (luciusFile, luciusFileDebug)
-import Text.Julius (juliusFile, juliusFileDebug)
+import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
+import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug)
+
+import Types 
 
 data GomokuServer = GomokuServer
 
@@ -14,10 +16,13 @@ mkYesod "GomokuServer" [parseRoutes|
 
 instance Yesod GomokuServer
 
+boardRows = [1..15]
+boardCols = [1..15]
+
 getHomeR :: Handler Html
 getHomeR = defaultLayout $ do 
         $(whamletFile "./src/templates/home.hamlet")
-        toWidget $(luciusFile "./src/templates/home.lucius")
+        toWidget $(luciusFileReload "./src/templates/home.lucius")
         toWidget $(juliusFile "./src/templates/home.julius")
 
 main :: IO ()
