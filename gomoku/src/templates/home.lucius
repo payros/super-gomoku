@@ -4,6 +4,7 @@
 @winXColor: #ffdf80;
 @oColor: #009688;
 @winOColor: #ffeb3b;
+@activeColor: #2755b0;
 
 
 h1 {
@@ -16,6 +17,95 @@ h1 {
     	text-decoration: underline;
 		color:#{oColor};
 	}
+}
+
+h2.scoreboard {
+	text-align: center;
+    font-size: 40px;
+    font-family: Helvetica, sans-serif;
+    color: #888;
+
+    input {
+	    font-size: 35px;
+	    max-width: 250px;
+	    border: none;
+	    margin: 0 20px;
+	    cursor:pointer;
+	    border-radius: 10px;
+    	padding: 5px 10px;
+    	transition:all 0.2s;
+    	/*text-align: center;*/
+    }
+
+    input:hover {
+    	background:#eee;
+    	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    }
+
+    input:focus {
+    	background:transparent;
+    	outline:none;
+    	border-bottom:2px solid;
+    	box-shadow:none;
+    	border-radius:0;
+    	/*text-align: left !important;*/
+    }
+
+    input.x {
+    	color:#{xColor};
+    	text-align:right;
+    }
+
+    input.o {
+		color:#{oColor};    	
+    }
+}
+
+section {
+	position: relative;
+}
+
+.end-game-overlay {
+	display:none;
+	position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 20;
+    top: 50%;
+    transform: translateY(-50%);
+
+    h3 {
+    	font-size: 40px;
+    	font-family: Helvetica;
+    	color: #fff;
+    }
+
+    button {
+    	font-size: 20px;
+	    padding: 10px 20px;
+	    border: 5px solid #fff;
+	    background: transparent;
+	    font-weight: bold;
+	    color: #fff;
+	    border-radius:50px;
+	    cursor:pointer;
+	    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+
+    button:hover {
+    	background: #fff;
+    	color:#{activeColor};
+    	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    }
+}
+
+.end-game-overlay.x-wins button:hover {
+	color:#{xColor};
+}
+
+.end-game-overlay.o-wins button:hover {
+	color:#{oColor};
 }
 
 table {
@@ -74,7 +164,25 @@ table {
 	tr:last-child > td {
 		border-bottom:none;
 	}
+}
 
+table::before {
+	height: 0;
+    width: 0;
+    background: rgba(39, 85, 176, 0.5);
+    content: '';
+    position: absolute;
+    opacity:0;
+    z-index:0;
+    transition: opacity 1s;
+}
+
+table.x-wins::before {
+	background: rgba(156, 39, 176, 0.8);
+}
+
+table.o-wins::before {
+	background: rgba(0, 150, 136, 0.8);
 }
 
 table.x-turn {
@@ -112,7 +220,15 @@ table.o-turn {
 }
 
 table.ended {
+	position: relative;
 	td {
 		cursor:default;
 	}
+}
+
+table.ended::before {
+	height:100%;
+	width:100%;
+	opacity:1;
+    z-index: 10;
 }

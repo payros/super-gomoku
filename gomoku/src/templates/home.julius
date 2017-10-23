@@ -74,25 +74,57 @@ $(function(){
 		if(valid(move)) {
 			BOARD[move[0]][move[1]] = TURN;
 			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN)
-			$('table').toggleClass('o-turn x-turn');
-			TURN = TURN === 'X' ? 'O' : 'X';
 
 			var winningMoves = tileWins();
 			if(checkFull() || winningMoves.length) {
 				endGame(winningMoves);
+			} else {
+				$('table').toggleClass('o-turn x-turn');
+				TURN = TURN === 'X' ? 'O' : 'X';
 			}
 		}
 	}
 
 	function endGame(winningMoves) {
-		$('table').addClass('ended').removeClass('o-turn x-turn');
+		var winnerClass = winningMoves.length ? TURN.toLowerCase() + '-wins' : '';
+		var outcomeText = winningMoves.length ? PLAYERS[TURN === 'X' ? 0 : 1] + " Wins" : "It's a Tie";
+		$('.end-game-overlay > h3').text(outcomeText);
+		$('.end-game-overlay').addClass(winnerClass).fadeIn(1000);
+		$('table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
 		for (var i = 0; i < winningMoves.length; i++) {
 			$('table>tbody>tr:nth-child('+ (winningMoves[i][0]+1) +')>td:nth-child(' + (winningMoves[i][1]+1) + ')').addClass('win');
 		};
+
+		//Increment Score
+		if(winningMoves.length) {
+			SCORES[TURN === 'X' ? 0 : 1]++;
+			refreshScores();
+		}
+		
 	}
 
-	function refreshBoard() {
-		//TO DO Implement refreshBoard
+	function clearBoard() {
+		console.log('cliked');
+		//Setup variables
+		TURN = WHO_STARTS_NEXT;
+		WHO_STARTS_NEXT = WHO_STARTS_NEXT === 'X' ? 'O' : 'X';
+		BOARD = getEmptyBoard();
+
+		//Setup UI
+		$('td').removeClass().text('');
+		$('table').removeClass().addClass(TURN.toLowerCase() + '-turn');
+		$('.end-game-overlay').fadeOut(1000).removeClass('x-wins o-wins');
+
+	}
+
+	//Rebuilds the board with new dimensions
+	function resizeBoard() {
+
+	}
+
+	function refreshScores() {
+		//TO DO Implement refresh scores
+		$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 	}
 
 	//Global Variables
@@ -100,6 +132,9 @@ $(function(){
 	var BOARD_DIMENSIONS = getBoardDimensions(); //Maybe we should get this from the backend as well?
 	var BOARD = getEmptyBoard();
 	var TURN = 'X';
+	var WHO_STARTS_NEXT = 'O';
+	var SCORES = [0,0];
+	var PLAYERS = ['Player1', 'Player2'];
 
 	//Event Handlers
 	$('table td').click(function(el){
@@ -109,5 +144,21 @@ $(function(){
 		var col = $(td).index();
 
 		if (!table.hasClass('ended')) putMove([row,col]);	
+	});
+
+	$('#play-again').click(clearBoard);
+
+	//Update player name
+	$('input.x, input.o').focusout(function(el){
+		var newName = $(el.target).val();
+		var playerIdx = $(el.target).hasClass('x') ? 0 : 1;
+
+		//If the name is valid, update
+		if(newName && newName.length) {
+			PLAYERS[playerIdx] = newName;
+		//Else, reset
+		} else {
+			$(el.target).val(PLAYERS[playerIdx]);
+		}
 	});
 });
