@@ -1,7 +1,7 @@
 @borderColor: #eee;
 @bgColor: #f8f8f8;
 @xColor: #9c27b0;
-@winXColor: #ffc107;
+@winXColor: #ffdf80;
 @oColor: #009688;
 @winOColor: #ffeb3b;
 
@@ -40,11 +40,23 @@ table {
 	td.x {
     	color: #{xColor};
     	background:#fff;
+    	cursor:default;
     }
 
     td.o {
     	color: #{oColor};
     	background:#fff;
+    	cursor:default;
+    }
+
+    td.x.win {
+    	background-color: #{winXColor};
+    	border:2px solid #{winXColor};
+    }
+
+    td.o.win {
+    	background-color: #{winOColor};
+    	border:2px solid #{winOColor};
     }
 
 	td:first-child {
@@ -96,5 +108,11 @@ table.o-turn {
 
 	td:not(.o):not(.x):hover::before {
 		color:#fff;
+	}
+}
+
+table.ended {
+	td {
+		cursor:default;
 	}
 }

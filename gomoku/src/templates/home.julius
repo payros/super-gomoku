@@ -1,1 +1,113 @@
-//Page Scripts Go Here
+//When page ready
+$(function(){
+	//Utility Functions
+	function getBoardDimensions() {
+		var rows = $('table>tbody').children().length;
+		var cols = $('table>tbody>tr:first').children().length;
+
+		return [rows,cols];
+	}
+
+	function getEmptyBoard() {
+		var board = [];
+		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
+			board.push([]);
+			for (col=0; col<BOARD_DIMENSIONS[0]; col++) {
+				board[row].push('');
+			}
+		}
+		return board;
+	}
+
+	//Returns an array of winning tiles or an empty array if there are no winners
+	function tileWins() {
+		//For every tile on the board, check if it forms a winning line
+		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
+			for (col=0; col<BOARD_DIMENSIONS[0]; col++) {
+				var startTile = BOARD[row][col];
+
+				if(startTile !== '') {
+					var hMoves = [];
+					var vMoves = [];
+					var aMoves = [];
+					var dMoves = [];
+
+					//Check if the start tile forms a winning
+					for(inc=0; inc<TILES_TO_WIN; inc++) {
+						var validRow = (row+inc) < BOARD_DIMENSIONS[0];
+						var validCol = (col+inc) < BOARD_DIMENSIONS[1];
+						var validCol2 = (col-inc) < BOARD_DIMENSIONS[1];
+
+						if (validRow && BOARD[row+inc][col] === startTile) hMoves.push([row+inc, col]);
+						if (validCol && BOARD[row][col+inc] === startTile) vMoves.push([row, col+inc]);
+						if (validRow && validCol && BOARD[row+inc][col+inc] === startTile) aMoves.push([row+inc, col+inc]);
+						if (validRow && validCol2 && BOARD[row+inc][col-inc] === startTile) dMoves.push([row+inc, col-inc]);
+					}
+
+					if(hMoves.length === TILES_TO_WIN) return hMoves;
+					if(vMoves.length === TILES_TO_WIN) return vMoves;	
+					if(aMoves.length === TILES_TO_WIN) return aMoves;	
+					if(dMoves.length === TILES_TO_WIN) return dMoves;						
+				}
+
+			}
+		}
+
+		return [];
+	}
+
+	function checkFull() {
+		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
+			for (col=0; col<BOARD_DIMENSIONS[0]; col++) {
+				if (BOARD[row][col] === '') return false;
+			}
+		}
+		return true;
+	}
+
+	function valid(move) {
+		return BOARD[move[0]][move[1]] === '';
+	}
+
+	//UI Functions
+	function putMove(move) {
+		if(valid(move)) {
+			BOARD[move[0]][move[1]] = TURN;
+			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN)
+			$('table').toggleClass('o-turn x-turn');
+			TURN = TURN === 'X' ? 'O' : 'X';
+
+			var winningMoves = tileWins();
+			if(checkFull() || winningMoves.length) {
+				endGame(winningMoves);
+			}
+		}
+	}
+
+	function endGame(winningMoves) {
+		$('table').addClass('ended').removeClass('o-turn x-turn');
+		for (var i = 0; i < winningMoves.length; i++) {
+			$('table>tbody>tr:nth-child('+ (winningMoves[i][0]+1) +')>td:nth-child(' + (winningMoves[i][1]+1) + ')').addClass('win');
+		};
+	}
+
+	function refreshBoard() {
+		//TO DO Implement refreshBoard
+	}
+
+	//Global Variables
+	// var TILES_TO_WIN = Getting it from the backend
+	var BOARD_DIMENSIONS = getBoardDimensions(); //Maybe we should get this from the backend as well?
+	var BOARD = getEmptyBoard();
+	var TURN = 'X';
+
+	//Event Handlers
+	$('table td').click(function(el){
+		var td = el.target;
+		var table = $(td).closest('table');
+		var row = $(td).parent('tr').index();
+		var col = $(td).index();
+
+		if (!table.hasClass('ended')) putMove([row,col]);	
+	});
+});

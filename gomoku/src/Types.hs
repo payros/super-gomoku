@@ -23,7 +23,7 @@ type Board  = [(Move, Tile)]
 data Dimentions = Dim {dimN :: Int, dimM :: Int, dimK :: Int}
 
 dim :: Dimentions
-dim = Dim 15 15 5 
+dim = Dim 10 10 5 
 
 
 (??) :: Board -> Move -> Tile

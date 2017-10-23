@@ -1,14 +1,10 @@
+<script>var TILES_TO_WIN = #{dimK dim};
 <header>
     <h1>Super <span>Gomoku</span>
 
-<table class="o-turn">
+<table class="x-turn">
     <tbody>
         $forall row <- boardRows
             <tr>
                 $forall col <- boardCols
-                    $if (==) [row, col] [7,7]
-                        <td class="x">X
-                    $elseif (==) [row, col] [8,8]
-                        <td class="o">O
-                    $else
-                        <td>
+                    <td>
