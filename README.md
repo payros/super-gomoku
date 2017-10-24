@@ -23,7 +23,6 @@ Time and knowledge permitting, this project will:
 Because this project is currently in early development, it's not deployed on a public server. If you would like to try it out, you can deploy it locally by following these steps:
 
 * Clone/Download the project
-* Go to the `gomoku` folder: `cd tic-tac-toe\gomoku`
 * Run `stack install`
 * Run `gomoku` (You may have to add the bin directory to your shell path)
 * Open a browser window and visit `localhost:3000` or `127.0.0.1:3000`
