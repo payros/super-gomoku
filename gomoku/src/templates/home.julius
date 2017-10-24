@@ -69,6 +69,15 @@ $(function(){
 		return BOARD[move[0]][move[1]] === '';
 	}
 
+	function startTimer() {
+		//Stop timer if it's already running
+		clearInterval(TIMER);
+
+		TIME = MAX_TIME;
+		$('#timer').removeClass().text(TIME < 10 ? '0' + TIME : TIME);
+		TIMER = setInterval(decrementTimer, 1000);
+	}
+
 	//UI Functions
 	function putMove(move) {
 		if(valid(move)) {
@@ -81,30 +90,39 @@ $(function(){
 			} else {
 				$('table').toggleClass('o-turn x-turn');
 				TURN = TURN === 'X' ? 'O' : 'X';
+				startTimer();
 			}
 		}
 	}
 
 	function endGame(winningMoves) {
-		var winnerClass = winningMoves.length ? TURN.toLowerCase() + '-wins' : '';
-		var outcomeText = winningMoves.length ? PLAYERS[TURN === 'X' ? 0 : 1] + " Wins" : "It's a Tie";
-		$('.end-game-overlay > h3').text(outcomeText);
+		var winnerClass = ''
+		var outcomeText = "It's a Tie";
+
+		//If there is a clear winner
+		if(winningMoves.length || !checkFull()) {
+			winnerClass = TURN.toLowerCase() + '-wins';
+			outcomeText = PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
+			SCORES[TURN === 'X' ? 0 : 1]++;
+			refreshScores();
+
+			//If the player timed out
+			if(!winningMoves.length) {
+				outcomeText = PLAYERS[TURN === 'X' ? 1 : 0] + ' <span class="danger">Timed Out!</span><br><br>' + outcomeText;
+			}
+		}
+
+		$('.end-game-overlay > h3').html(outcomeText);
 		$('.end-game-overlay').addClass(winnerClass).fadeIn(1000);
 		$('table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
 		for (var i = 0; i < winningMoves.length; i++) {
 			$('table>tbody>tr:nth-child('+ (winningMoves[i][0]+1) +')>td:nth-child(' + (winningMoves[i][1]+1) + ')').addClass('win');
 		};
 
-		//Increment Score
-		if(winningMoves.length) {
-			SCORES[TURN === 'X' ? 0 : 1]++;
-			refreshScores();
-		}
-		
+
 	}
 
 	function clearBoard() {
-		console.log('cliked');
 		//Setup variables
 		TURN = WHO_STARTS_NEXT;
 		WHO_STARTS_NEXT = WHO_STARTS_NEXT === 'X' ? 'O' : 'X';
@@ -115,20 +133,32 @@ $(function(){
 		$('table').removeClass().addClass(TURN.toLowerCase() + '-turn');
 		$('.end-game-overlay').fadeOut(1000).removeClass('x-wins o-wins');
 
+		startTimer();
 	}
 
 	//Rebuilds the board with new dimensions
 	function resizeBoard() {
-
 	}
 
 	function refreshScores() {
-		//TO DO Implement refresh scores
 		$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
+	}
+
+	function decrementTimer(){
+		TIME--;
+		$('#timer').text(TIME < 10 ? '0' + TIME : TIME);
+		if(TIME <= 10) $('#timer').addClass('danger');
+		if(TIME === 0) {
+			TURN = TURN === 'X' ? 'O' : 'X';
+			endGame([]);
+			clearInterval(TIMER);
+		}
 	}
 
 	//Global Variables
 	// var TILES_TO_WIN = Getting it from the backend
+	var TIME, TIMER;
+	var MAX_TIME = 15; //In seconds
 	var BOARD_DIMENSIONS = getBoardDimensions(); //Maybe we should get this from the backend as well?
 	var BOARD = getEmptyBoard();
 	var TURN = 'X';
@@ -161,4 +191,8 @@ $(function(){
 			$(el.target).val(PLAYERS[playerIdx]);
 		}
 	});
+
+
+	//Start timer for the first time
+	startTimer();
 });

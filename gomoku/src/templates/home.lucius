@@ -5,7 +5,7 @@
 @oColor: #009688;
 @winOColor: #ffeb3b;
 @activeColor: #2755b0;
-
+@dangerColor: #F44336;
 
 h1 {
 	font-family: Helvetica, sans-serif;
@@ -78,6 +78,13 @@ section {
     	font-size: 40px;
     	font-family: Helvetica;
     	color: #fff;
+
+    	span.danger {
+    		background-color: #{dangerColor};
+		    color: #fff;
+		    padding: 5px 10px;
+		    border-radius: 5px;
+    	}
     }
 
     button {
@@ -231,4 +238,15 @@ table.ended::before {
 	width:100%;
 	opacity:1;
     z-index: 10;
+}
+
+#timer {
+	text-align: center;
+    font-size: 40px;
+    font-family: Helvetica, sans-serif;
+    color: #{activeColor};
+}
+
+#timer.danger {
+	color:#{dangerColor};
 }

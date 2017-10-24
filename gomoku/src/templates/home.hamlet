@@ -12,3 +12,4 @@
                 <tr>
                     $forall col <- boardCols
                         <td>
+<h2 id="timer">30
