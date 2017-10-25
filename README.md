@@ -6,7 +6,7 @@ When Completed, this project will let users:
 
 * Play Gomoku in three modes:
 
-  - [ ] Human X Human (Local)
+  - [x] Human X Human (Local)
   - [ ] Human X Bot
   - [ ] Bot X Bot
 
