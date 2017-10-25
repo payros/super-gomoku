@@ -6,6 +6,7 @@ import Yesod
 import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
 import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug)
 
+import Players
 import Types 
 
 data GomokuServer = GomokuServer

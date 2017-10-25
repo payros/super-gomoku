@@ -6,12 +6,172 @@
 @winOColor: #ffeb3b;
 @activeColor: #2755b0;
 @dangerColor: #F44336;
+@liColor1: #009688;
+@liColor2: #4caf50;
+@liColor3: #8bc34a;
+@liColor4: #cddc39;
+@liColor5: #ffeb3b;
+@liColor6: #ffc107;
+@liColor7: #ff9800;
+@liColor8: #ff5722;
+@liColor9: #f44336;
+@liColor10:#e91e63;
+@liColor11:#9c27b0;
+@liColor12:#673ab7;
+@liColor13:#3f51b5;
+@liColor14:#2196f3;
+@liColor15:#03a9f4;
+@liColor16:#00bcd4;
+
+
+/* General Styles */
+* {
+	font-family: Helvetica, sans-serif;
+}
+
+button {
+    cursor: pointer;
+    background: transparent;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+button:hover {
+	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+/* Specific Styles */
+body {
+	position:absolute;
+	display:flex;
+	flex-wrap:wrap;
+	align-items:flex-start;
+	margin:0;
+	width:100%;
+}
+
+header {
+	width:100%;
+}
+
+aside {
+	width:19%;
+
+	h2 {
+		color:#bbb;
+		font-weight:normal;
+		text-decoration:underline;
+	}
+
+	ul {
+		list-style: none;
+
+		li {
+			font-size:20px;
+			font-weight:bold;
+			padding:4px 0;
+		}
+
+		li:nth-child(1n) { color:#{liColor1}; }
+		li:nth-child(2n) { color:#{liColor2}; }
+		li:nth-child(3n) { color:#{liColor3}; }
+		li:nth-child(4n) { color:#{liColor4}; }
+		li:nth-child(5n) { color:#{liColor5}; }
+		li:nth-child(6n) { color:#{liColor6}; }
+		li:nth-child(7n) { color:#{liColor7}; }
+		li:nth-child(8n) { color:#{liColor8}; }
+		li:nth-child(9n) { color:#{liColor9}; }
+		li:nth-child(10n) { color:#{liColor10}; }
+		li:nth-child(11n) { color:#{liColor11}; }
+		li:nth-child(12n) { color:#{liColor12}; }
+		li:nth-child(13n) { color:#{liColor13}; }
+		li:nth-child(14n) { color:#{liColor14}; }
+		li:nth-child(15n) { color:#{liColor15}; }
+		li:nth-child(16n) { color:#{liColor16}; }
+	}
+}
+
+aside.settings {
+	text-align: left;
+	padding-left:1%;
+
+	input[type=number] {
+	    font-size: 20px;
+	    border-radius: 4px;
+	    width: 50px;
+	    border: 1px solid #ccc;
+	    box-shadow: 1px 1px 4px #eee;
+	    text-align: center;
+	    padding: 2px 0;
+	    /* color: #{activeColor}; */
+	}
+
+	h4 {
+		margin-bottom:4px;
+	}
+
+	h4:nth-of-type(1n), span:nth-of-type(1n) {
+		color:#{oColor};
+
+		input {
+			color:#{oColor};
+		}
+	}
+
+	h4:nth-of-type(2n), span:nth-of-type(2n) {
+		color:#{xColor};
+
+		input {
+			color:#{xColor};
+		}
+	}
+
+	h4:nth-of-type(3n), span:nth-of-type(3n) {
+		color:#{dangerColor};
+
+		input {
+			color:#{dangerColor};
+		}
+	}
+
+	button {
+		display: block;
+	    margin: 30px 0 0;
+	    font-size: 15px;
+	    padding: 6px 10px;
+	    color: #{activeColor};
+	    border: 2px solid #{activeColor};
+	    border-radius: 5px;
+	    box-shadow:none;
+	    text-align:left:
+	    font-weight:normal;
+	}
+
+	button:hover {
+    	background-color:#{activeColor};
+    	color:#fff;
+    }
+}
+
+aside.bots {
+	text-align: right;
+	padding-right:1%;
+}
+
+section {
+	position: relative;
+	width:60%;
+	max-width:700px;
+	margin:0 auto;
+}
 
 h1 {
-	font-family: Helvetica, sans-serif;
 	text-align: center;
 	font-size:60px;
 	color:#{xColor};
+	margin:20px 0;
+
 	span {
 		font-size: 110%;
     	text-decoration: underline;
@@ -22,8 +182,8 @@ h1 {
 h2.scoreboard {
 	text-align: center;
     font-size: 40px;
-    font-family: Helvetica, sans-serif;
     color: #888;
+    margin:10px 0 20px;
 
     input {
 	    font-size: 35px;
@@ -61,22 +221,26 @@ h2.scoreboard {
     }
 }
 
-section {
-	position: relative;
-}
 
-.end-game-overlay {
-	display:none;
-	position: absolute;
-    text-align: center;
-    width: 100%;
-    z-index: 20;
-    top: 50%;
-    transform: translateY(-50%);
+
+.game-overlay {
+	position:absolute;
+    height:100%;
+	width:100%;
+	z-index:10;
+    background: rgba(39, 85, 176, 0.5);
+
+    .overlay-content {
+    	position: absolute;
+    	text-align: center;
+	    top: 50%;
+	    width:100%;
+	    transform: translateY(-50%);
+    }
 
     h3 {
+    	display:none;
     	font-size: 40px;
-    	font-family: Helvetica;
     	color: #fff;
 
     	span.danger {
@@ -91,43 +255,53 @@ section {
     	font-size: 20px;
 	    padding: 10px 20px;
 	    border: 5px solid #fff;
-	    background: transparent;
-	    font-weight: bold;
 	    color: #fff;
 	    border-radius:50px;
 	    cursor:pointer;
-	    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-	    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
     }
 
     button:hover {
     	background: #fff;
     	color:#{activeColor};
-    	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    }
+
+    #play-again {
+    	display:none;
+    	margin:0 auto;
+    }
+
+    #start-game {
+    	font-size:35px;
+    	padding:17.5px 35px;
     }
 }
 
-.end-game-overlay.x-wins button:hover {
-	color:#{xColor};
+.game-overlay.x-wins {
+	background:rgba(156, 39, 176, 0.8);
+
+	button:hover {
+		color:#{xColor};
+	}
 }
 
-.end-game-overlay.o-wins button:hover {
-	color:#{oColor};
+.game-overlay.o-wins {
+	background-color:rgba(0, 150, 136, 0.8);
+
+	button:hover {
+		color:#{oColor};
+	}
 }
 
 table {
     border-collapse: collapse;
-    margin: 50px auto;
+    margin: 0 auto;
     box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.1);
 
 	td {
 		border:2px solid #{borderColor};
 		background:#{bgColor};
-		width: 50px;
-    	height: 50px;
     	font-size: 40px;
 	    font-weight: bold;
-	    font-family: Helvetica;
 	    text-align: center;
 		cursor:pointer;
 		transform: rotateY(0deg);
@@ -173,25 +347,6 @@ table {
 	}
 }
 
-table::before {
-	height: 0;
-    width: 0;
-    background: rgba(39, 85, 176, 0.5);
-    content: '';
-    position: absolute;
-    opacity:0;
-    z-index:0;
-    transition: opacity 1s;
-}
-
-table.x-wins::before {
-	background: rgba(156, 39, 176, 0.8);
-}
-
-table.o-wins::before {
-	background: rgba(0, 150, 136, 0.8);
-}
-
 table.x-turn {
 	td:not(.o):not(.x):hover {
 		background-color:#{xColor};
@@ -233,17 +388,12 @@ table.ended {
 	}
 }
 
-table.ended::before {
-	height:100%;
-	width:100%;
-	opacity:1;
-    z-index: 10;
-}
-
 #timer {
+	position: absolute;
+	width:100%;
+	margin:20px 0 0;
 	text-align: center;
     font-size: 40px;
-    font-family: Helvetica, sans-serif;
     color: #{activeColor};
 }
 

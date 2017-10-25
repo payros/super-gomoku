@@ -1,15 +1,31 @@
 <script>var TILES_TO_WIN = #{dimK dim};
 <header>
     <h1>Super <span>Gomoku</span>
-    <h2 class="scoreboard"><input type="text" class='x' value="Player1"><span class="score"> 0 x 0 </span><input type="text" class='o' value="Player2">
+    <h2 class="scoreboard"><input type="text" class="x" value="Player1"><span class="score"> 0 x 0 </span><input type="text" class="o" value="Player2">
+<aside class="settings">
+    <h2>Settings
+    <h4>Board Dimensions
+    <span><input id="in_row" type="number" value="#{dimM dim}" min="3" max="20"> x <input id="in_col" type="number" value="#{dimN dim}" min="3" max="20">
+    <h4>Tiles to Win
+    <span><input id="in_tiles_to_win" type="number" value="#{dimK dim}" min="3" max="20">
+    <h4>Player Timeout
+    <span><input id="in_timeout" type="number" min="0" max="30">
+    <button id="save-settings">Reset Board
 <section>
-    <div class="end-game-overlay">
-        <h3>Player 1 Wins
-        <button id="play-again">Play Again</button>
-    <table class="x-turn">
+    <table class="ended">
+        <div class="game-overlay">
+            <div class="overlay-content">
+                <h3>Player1 Wins
+                <button id="play-again">Play Again</button>
+                <button id="start-game">Start Game</button>
         <tbody>
             $forall row <- boardRows
                 <tr>
                     $forall col <- boardCols
                         <td>
-<h2 id="timer">30
+    <h2 id="timer">30
+<aside class="bots">
+    <h2>Bots
+    <ul>
+        $forall player <- players
+            <li>#{fst player}
