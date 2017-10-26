@@ -1,4 +1,3 @@
-<script>var TILES_TO_WIN = #{dimK dim};
 <header>
     <h1>Super <span>Gomoku</span>
     <h2 class="scoreboard"><input type="text" class="x" value="Player1"><span class="score"> 0 x 0 </span><input type="text" class="o" value="Player2">
@@ -16,8 +15,8 @@
         <div class="game-overlay">
             <div class="overlay-content">
                 <h3>Player1 Wins
-                <button id="play-again">Play Again</button>
-                <button id="start-game">Start Game</button>
+                <button id="play-again">Play Again
+                <button id="start-game">Start Game
         <tbody>
             $forall row <- boardRows
                 <tr>

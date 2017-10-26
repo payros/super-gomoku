@@ -4,7 +4,7 @@
 {-# LANGUAGE TypeFamilies          #-}
 import Yesod
 import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
-import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug)
+import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug, rawJS)
 
 import Players
 import Types 
