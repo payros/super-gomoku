@@ -1,18 +1,13 @@
 //When page ready
 $(function(){
-	//Utility Functions
-	function getBoardDimensions() {
-		var rows = $('table>tbody').children().length;
-		var cols = $('table>tbody>tr:first').children().length;
 
-		return [rows,cols];
-	}
+	////**** UTILITY FUNCTIONS ****////
 
-	function getEmptyBoard() {
+	function makeEmptyBoard() {
 		var board = [];
 		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
 			board.push([]);
-			for (col=0; col<BOARD_DIMENSIONS[0]; col++) {
+			for (col=0; col<BOARD_DIMENSIONS[1]; col++) {
 				board[row].push('');
 			}
 		}
@@ -71,13 +66,17 @@ $(function(){
 
 	function startTimer() {
 		//Stop timer if it's already running
-		clearInterval(TIMER);
-		TIME = TIMEOUT;
-		$('#timer').removeClass().text(TIME < 10 ? '0' + TIME : TIME);
+		stopTimer();
 
 		if(TIMEOUT !== 0) {
 			TIMER = setInterval(decrementTimer, 1000);			
 		}
+	}
+
+	function stopTimer() {
+		clearInterval(TIMER);
+		TIME = TIMEOUT;
+		$('#timer').removeClass().text(TIME < 10 ? '0' + TIME : TIME);
 	}
 
 	function saveSettings() {
@@ -124,59 +123,50 @@ $(function(){
 		if (!table.hasClass('ended')) putMove([row,col]);	
 	}
 
-	//UI Functions
-	function putMove(move) {
-		if(valid(move)) {
-			BOARD[move[0]][move[1]] = TURN;
-			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN)
 
-			var winningMoves = tileWins();
-			if(checkFull() || winningMoves.length) {
-				endGame(winningMoves);
-			} else {
-				$('table').toggleClass('o-turn x-turn');
-				TURN = TURN === 'X' ? 'O' : 'X';
-				startTimer();
-			}
+	////**** UI FUNCTIONS ****////
+
+	function startGame(replay) {
+		if(replay) {
+			TURN = WHO_STARTS_NEXT;
+			WHO_STARTS_NEXT = WHO_STARTS_NEXT === 'X' ? 'O' : 'X';
+			BOARD = makeEmptyBoard();
+
+			$('td').removeClass().text('');			
 		}
-	}
 
-
-	function startGame() {
-
-		//Setup UI
 		$('table').removeClass().addClass(TURN.toLowerCase() + '-turn');
-		$('.game-overlay').fadeOut(1000);
+		$('.game-overlay').fadeOut(1000).removeClass('x-wins o-wins');
 
 		startTimer();
 	}
 
-	function pauseGame() {
-		//Stop timer if it's already running
-		clearInterval(TIMER);
-		TIME = TIMEOUT;
-		$('#timer').removeClass().text(TIME < 10 ? '0' + TIME : TIME);
+	//Resets the game without declaring an outcome
+	function resetGame() {
+		stopTimer();
+
 
 		$('.game-overlay h3, #play-again').hide();
 		$('#start-game').show();
 		$('.game-overlay').removeClass('x-wins o-wins').fadeIn(1000);
 	}
 
+	//Resets the game declaring an outcome
 	function endGame(winningMoves) {
-		clearInterval(TIMER);
+		if(TIME > 0 ) stopTimer();
 
 		var winnerClass = ''
 		var outcomeText = "It's a Tie";
 
 		//If there is a clear winner
-		if(winningMoves.length || !checkFull()) {
+		if(winningMoves.length || TIME === 0) {
 			winnerClass = TURN.toLowerCase() + '-wins';
 			outcomeText = PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
 			SCORES[TURN === 'X' ? 0 : 1]++;
-			refreshScores();
+			$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 
 			//If the player timed out
-			if(!winningMoves.length) {
+			if(TIME === 0) {
 				outcomeText = PLAYERS[TURN === 'X' ? 1 : 0] + ' <span class="danger">Timed Out!</span><br><br>' + outcomeText;
 			}
 		}
@@ -191,18 +181,22 @@ $(function(){
 		};
 	}
 
-	function clearBoard() {
-		//Setup variables
-		TURN = WHO_STARTS_NEXT;
-		WHO_STARTS_NEXT = WHO_STARTS_NEXT === 'X' ? 'O' : 'X';
-		BOARD = getEmptyBoard();
+	function putMove(move) {
+		if(valid(move)) {
+			BOARD[move[0]][move[1]] = TURN;
+			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN)
 
-		//Setup UI
-		$('td').removeClass().text('');
-		$('table').removeClass().addClass(TURN.toLowerCase() + '-turn');
-		$('.game-overlay').fadeOut(1000).removeClass('x-wins o-wins');
-
-		startTimer();
+			var winningMoves = tileWins();
+			if(checkFull() || winningMoves.length) {
+				endGame(winningMoves);
+			} else {
+				$('table').toggleClass('o-turn x-turn');
+				TURN = TURN === 'X' ? 'O' : 'X';
+				startTimer();
+			}
+		} else {
+			//TO DO Handle invalid move. End game, other player wins
+		}
 	}
 
 	//Rebuilds the board with new dimensions
@@ -223,18 +217,15 @@ $(function(){
 		resizeTiles();
 
 		//Resets everything for a new game
-		pauseGame();
+		resetGame();
 	}
 
+	//Resize the tiles to keep the board pixel size the same
 	function resizeTiles() {
 		totalW = $('section').width();
 		tileSize = totalW/BOARD_DIMENSIONS[0];
 
 		$('td').css({'width':tileSize, 'height':tileSize, fontSize:tileSize*0.8});
-	}
-
-	function refreshScores() {
-		$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 	}
 
 	function decrementTimer(){
@@ -248,26 +239,7 @@ $(function(){
 		}
 	}
 
-	//Global Variables
-	// var TILES_TO_WIN = Getting it from the backend
-	var TIME, TIMER;
-	var TIMEOUT = 30; //In seconds
-	var BOARD_DIMENSIONS = getBoardDimensions(); //Maybe we should get this from the backend as well?
-	var BOARD = getEmptyBoard();
-	var TURN = 'X';
-	var WHO_STARTS_NEXT = 'O';
-	var SCORES = [0,0];
-	var PLAYERS = ['Player1', 'Player2'];
-
-	//Event Handlers
-	$('table td').click(humanMove);
-	$('#start-game').click(startGame);
-	$('#play-again').click(clearBoard);
-	$('#save-settings').click(saveSettings);
-	$(window).resize(resizeTiles);
-
-	//Update player name
-	$('input.x, input.o').focusout(function(el){
+	function updateName(el){
 		var newName = $(el.target).val();
 		var playerIdx = $(el.target).hasClass('x') ? 0 : 1;
 
@@ -278,10 +250,35 @@ $(function(){
 		} else {
 			$(el.target).val(PLAYERS[playerIdx]);
 		}
-	});
+	}
 
-	//Update Settings Values for the first time
-	$('#in_timeout').val(TIMEOUT);
+
+	////**** GLOBAL VARIABLES ****////
+
+	var TIME, TIMER;
+	var BOARD_DIMENSIONS = [#{rawJS $ show $ dimM dim}, #{rawJS $ show $ dimN dim}]; //Maybe we should get this from the backend as well?
+	var TILES_TO_WIN = #{rawJS $ show $ dimK dim};
+	var TIMEOUT = 30; //In seconds
+	var BOARD = makeEmptyBoard();
+	var TURN = 'X';
+	var WHO_STARTS_NEXT = 'O';
+	var SCORES = [0,0];
+	var PLAYERS = ['Player1', 'Player2'];
+
+
+	////**** EVENT HANDLERS ****////
+
+	$('table td').click(humanMove);
+	$('#save-settings').click(saveSettings);
+	$('#start-game').click(function(){ startGame(false); });
+	$('#play-again').click(function(){ startGame(true); });
+	$('input.x, input.o').focusout(updateName);
+	$(window).resize(resizeTiles);
+
 	
+	////**** EXECUTE PAGE SCRIPTS ****////
 	resizeTiles();
+
+	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)
+	$('#in_timeout').val(TIMEOUT);
 });
