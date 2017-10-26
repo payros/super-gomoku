@@ -8,7 +8,7 @@ $(function(){
 		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
 			board.push([]);
 			for (col=0; col<BOARD_DIMENSIONS[1]; col++) {
-				board[row].push('');
+				board[row].push(' ');
 			}
 		}
 		return board;
@@ -21,7 +21,7 @@ $(function(){
 			for (col=0; col<BOARD_DIMENSIONS[0]; col++) {
 				var startTile = BOARD[row][col];
 
-				if(startTile !== '') {
+				if(startTile !== ' ') {
 					var hMoves = [];
 					var vMoves = [];
 					var aMoves = [];
@@ -54,14 +54,14 @@ $(function(){
 	function checkFull() {
 		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
 			for (col=0; col<BOARD_DIMENSIONS[1]; col++) {
-				if (BOARD[row][col] === '') return false;
+				if (BOARD[row][col] === ' ') return false;
 			}
 		}
 		return true;
 	}
 
 	function valid(move) {
-		return BOARD[move[0]][move[1]] === '';
+		return BOARD[move[0]][move[1]] === ' ';
 	}
 
 	function startTimer() {
@@ -132,7 +132,7 @@ $(function(){
 			WHO_STARTS_NEXT = WHO_STARTS_NEXT === 'X' ? 'O' : 'X';
 			BOARD = makeEmptyBoard();
 
-			$('td').removeClass().text('');			
+			$('td').removeClass().text(' ');			
 		}
 
 		$('table').removeClass().addClass(TURN.toLowerCase() + '-turn');
@@ -144,7 +144,6 @@ $(function(){
 	//Resets the game without declaring an outcome
 	function resetGame() {
 		stopTimer();
-
 
 		$('.game-overlay h3, #play-again').hide();
 		$('#start-game').show();
@@ -201,6 +200,8 @@ $(function(){
 
 	//Rebuilds the board with new dimensions
 	function resizeBoard() {
+		BOARD = makeEmptyBoard();
+
 		var newTable = "";
 		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
 			newTable += "<tr>";
@@ -252,6 +253,12 @@ $(function(){
 		}
 	}
 
+	function getMove(){
+		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':BOARD, 'turn':TURN }, function(data){
+			console.log(data);
+		});
+	}
+
 
 	////**** GLOBAL VARIABLES ****////
 
@@ -271,6 +278,7 @@ $(function(){
 	$('table td').click(humanMove);
 	$('#save-settings').click(saveSettings);
 	$('#start-game').click(function(){ startGame(false); });
+	// $('#start-game').click(getMove);
 	$('#play-again').click(function(){ startGame(true); });
 	$('input.x, input.o').focusout(updateName);
 	$(window).resize(resizeTiles);
