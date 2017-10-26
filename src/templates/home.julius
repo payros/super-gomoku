@@ -165,7 +165,7 @@ $(function(){
 	function endGame(winningMoves) {
 		clearInterval(TIMER);
 
-		var winnerClass = ''
+		var winnerClass = '';
 		var outcomeText = "It's a Tie";
 
 		//If there is a clear winner
@@ -188,7 +188,7 @@ $(function(){
 		$('table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
 		for (var i = 0; i < winningMoves.length; i++) {
 			$('table>tbody>tr:nth-child('+ (winningMoves[i][0]+1) +')>td:nth-child(' + (winningMoves[i][1]+1) + ')').addClass('win');
-		};
+		}
 	}
 
 	function clearBoard() {
