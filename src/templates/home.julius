@@ -73,58 +73,14 @@ $(function(){
 		}
 	}
 
+
+	////**** UI FUNCTIONS ****////
+
 	function stopTimer() {
 		clearInterval(TIMER);
 		TIME = TIMEOUT;
 		$('#timer').removeClass().text(TIME < 10 ? '0' + TIME : TIME);
 	}
-
-	function saveSettings() {
-		var newRow = $('#in_row').val();
-		var newCol = $('#in_col').val();
-		var newTilesToWin = $('#in_tiles_to_win').val();
-		var newTimeout = $('#in_timeout').val();
-
-		if(newRow && !isNaN(newRow) && newRow >= 3 && newRow <= 20) {
-			BOARD_DIMENSIONS[0] = parseInt(newRow);
-		} else {
-			$('#in_row').val(BOARD_DIMENSIONS[0]);
-		}
-			
-		if(newCol && !isNaN(newCol) && newCol >= 3 && newCol <= 20) {
-			BOARD_DIMENSIONS[1] = parseInt(newCol);
-		} else {
-			$('#in_col').val(BOARD_DIMENSIONS[1]);
-		}
-
-		if(newTilesToWin && !isNaN(newTilesToWin) && newTilesToWin >= 3 && newTilesToWin <= Math.max(BOARD_DIMENSIONS[0],BOARD_DIMENSIONS[1])) {
-			TILES_TO_WIN = parseInt(newTilesToWin);
-		} else {
-			$('#in_tiles_to_win').val(Math.min(TILES_TO_WIN, Math.max(BOARD_DIMENSIONS[0],BOARD_DIMENSIONS[1])));
-		}
-
-		if(newTimeout && !isNaN(newTimeout) && newTimeout >= 0) {
-			TIMEOUT = parseInt(newTimeout);
-		} else {
-			$('#in_timeout').val(TIMEOUT);
-		}
-			
-		//TO DO Update backend settings
-
-		resizeBoard();
-	}
-
-	function humanMove(el){
-		var td = el.target;
-		var table = $(td).closest('table');
-		var row = $(td).parent('tr').index();
-		var col = $(td).index();
-
-		if (!table.hasClass('ended')) putMove([row,col]);	
-	}
-
-
-	////**** UI FUNCTIONS ****////
 
 	function startGame(replay) {
 		if(replay) {
@@ -240,6 +196,33 @@ $(function(){
 		}
 	}
 
+
+	////**** AJAX REQUESTS ****////
+
+	//Get a moved from a Bot
+	function getMove(){
+		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':BOARD, 'turn':TURN }, function(data){
+			console.log(data);
+		});
+	}
+
+
+	////**** HANDLER FUNCTIONS ****////
+
+	function droppedBot( event, ui ) {
+		botName = ui.draggable.text();
+		PLAYERS[$(this).hasClass('x') ? 0 : 1] = botName;
+		$(this).val(botName);
+    }
+
+    function stoppedDragging(){
+		var elem = $(this)
+		elem.hide();
+		setTimeout(function(){
+			elem.fadeIn(500);
+		}, 200);
+	}
+
 	function updateName(el){
 		var newName = $(el.target).val();
 		var playerIdx = $(el.target).hasClass('x') ? 0 : 1;
@@ -253,17 +236,49 @@ $(function(){
 		}
 	}
 
-	function getMove(){
-		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':BOARD, 'turn':TURN }, function(data){
-			console.log(data);
-		});
+	function humanMove(el){
+		var td = el.target;
+		var table = $(td).closest('table');
+		var row = $(td).parent('tr').index();
+		var col = $(td).index();
+
+		if (!table.hasClass('ended')) putMove([row,col]);	
 	}
 
-	function droppedBot( event, ui ) {
-		botName = ui.draggable.text();
-		PLAYERS[$(this).hasClass('x') ? 0 : 1] = botName;
-		$(this).val(botName);
-    }
+	function saveSettings() {
+		var newRow = $('#in_row').val();
+		var newCol = $('#in_col').val();
+		var newTilesToWin = $('#in_tiles_to_win').val();
+		var newTimeout = $('#in_timeout').val();
+
+		if(newRow && !isNaN(newRow) && newRow >= 3 && newRow <= 20) {
+			BOARD_DIMENSIONS[0] = parseInt(newRow);
+		} else {
+			$('#in_row').val(BOARD_DIMENSIONS[0]);
+		}
+			
+		if(newCol && !isNaN(newCol) && newCol >= 3 && newCol <= 20) {
+			BOARD_DIMENSIONS[1] = parseInt(newCol);
+		} else {
+			$('#in_col').val(BOARD_DIMENSIONS[1]);
+		}
+
+		if(newTilesToWin && !isNaN(newTilesToWin) && newTilesToWin >= 3 && newTilesToWin <= Math.max(BOARD_DIMENSIONS[0],BOARD_DIMENSIONS[1])) {
+			TILES_TO_WIN = parseInt(newTilesToWin);
+		} else {
+			$('#in_tiles_to_win').val(Math.min(TILES_TO_WIN, Math.max(BOARD_DIMENSIONS[0],BOARD_DIMENSIONS[1])));
+		}
+
+		if(newTimeout && !isNaN(newTimeout) && newTimeout >= 0) {
+			TIMEOUT = parseInt(newTimeout);
+		} else {
+			$('#in_timeout').val(TIMEOUT);
+		}
+			
+		//TO DO Update backend settings
+
+		resizeBoard();
+	}
 
 
 	////**** GLOBAL VARIABLES ****////
@@ -286,23 +301,13 @@ $(function(){
 	$('#start-game').click(function(){ startGame(false); });
 	// $('#start-game').click(getMove);
 	$('#play-again').click(function(){ startGame(true); });
-	$('input.x, input.o').focusout(updateName).droppable({drop:droppedBot, classes: {
-    	"ui-droppable-active": "droppable"
-  	}});
+	$('input.x, input.o').focusout(updateName).droppable({drop:droppedBot, classes: { "ui-droppable-active": "droppable" }});
+  	$( ".bots li" ).draggable({revert:true, classes: { "ui-draggable-dragging": "highlight" },  stop:stoppedDragging });
 	$(window).resize(resizeTiles);
 
 	
 	////**** EXECUTE PAGE SCRIPTS ****////
 	resizeTiles();
-	$( ".bots li" ).draggable({revert:true, classes: {
-    	"ui-draggable-dragging": "highlight"
-  	},  stop:function(){
-		var elem = $(this)
-		elem.hide();
-		setTimeout(function(){
-			elem.fadeIn(500);
-		}, 200);
-	}});
 
 	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)
 	$('#in_timeout').val(TIMEOUT);
