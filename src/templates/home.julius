@@ -158,14 +158,14 @@ $(function(){
 		var outcomeText = "It's a Tie";
 
 		//If there is a clear winner
-		if(winningMoves.length || TIME === 0) {
+		if(winningMoves.length || !checkFull()) {
 			winnerClass = TURN.toLowerCase() + '-wins';
 			outcomeText = PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
 			SCORES[TURN === 'X' ? 0 : 1]++;
 			$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 
 			//If the player timed out
-			if(TIME === 0) {
+			if(!winningMoves.length) {
 				outcomeText = PLAYERS[TURN === 'X' ? 1 : 0] + ' <span class="danger">Timed Out!</span><br><br>' + outcomeText;
 			}
 		}
@@ -224,7 +224,7 @@ $(function(){
 	//Resize the tiles to keep the board pixel size the same
 	function resizeTiles() {
 		totalW = $('section').width();
-		tileSize = totalW/BOARD_DIMENSIONS[0];
+		tileSize = totalW/Math.max(BOARD_DIMENSIONS[0],BOARD_DIMENSIONS[1]);
 
 		$('td').css({'width':tileSize, 'height':tileSize, fontSize:tileSize*0.8});
 	}
@@ -259,11 +259,17 @@ $(function(){
 		});
 	}
 
+	function droppedBot( event, ui ) {
+		botName = ui.draggable.text();
+		PLAYERS[$(this).hasClass('x') ? 0 : 1] = botName;
+		$(this).val(botName);
+    }
+
 
 	////**** GLOBAL VARIABLES ****////
 
 	var TIME, TIMER;
-	var BOARD_DIMENSIONS = [#{rawJS $ show $ dimM dim}, #{rawJS $ show $ dimN dim}]; //Maybe we should get this from the backend as well?
+	var BOARD_DIMENSIONS = [#{rawJS $ show $ dimM dim}, #{rawJS $ show $ dimN dim}];
 	var TILES_TO_WIN = #{rawJS $ show $ dimK dim};
 	var TIMEOUT = 30; //In seconds
 	var BOARD = makeEmptyBoard();
@@ -280,12 +286,23 @@ $(function(){
 	$('#start-game').click(function(){ startGame(false); });
 	// $('#start-game').click(getMove);
 	$('#play-again').click(function(){ startGame(true); });
-	$('input.x, input.o').focusout(updateName);
+	$('input.x, input.o').focusout(updateName).droppable({drop:droppedBot, classes: {
+    	"ui-droppable-active": "droppable"
+  	}});
 	$(window).resize(resizeTiles);
 
 	
 	////**** EXECUTE PAGE SCRIPTS ****////
 	resizeTiles();
+	$( ".bots li" ).draggable({revert:true, classes: {
+    	"ui-draggable-dragging": "highlight"
+  	},  stop:function(){
+		var elem = $(this)
+		elem.hide();
+		setTimeout(function(){
+			elem.fadeIn(500);
+		}, 200);
+	}});
 
 	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)
 	$('#in_timeout').val(TIMEOUT);

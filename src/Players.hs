@@ -2,9 +2,7 @@ module Players (players) where
 import Types
 import Player.BestNext (playerBestNext)
 import Player.BlindGuess (playerBlindGuess)
-import Player.Computer (playerComputer)
 import Player.HeadlessChicken (playerHeadlessChicken)
-import Player.Human (playerHuman)
 import Player.Hybrid (playerHybrid)
 import Player.Kevin (playerKevin)
 import Player.KunkelOwen (playerKunkelOwen)
@@ -19,5 +17,5 @@ import Player.TeamSinister (playerTeamSinister)
 import Player.Theta (playerTheta)
 players :: [(String, Player)]
 players = [
-  ("BestNext", playerBestNext),("BlindGuess", playerBlindGuess),("Computer", playerComputer),("HeadlessChicken", playerHeadlessChicken),("Human", playerHuman),("Hybrid", playerHybrid),("Kevin", playerKevin),("KunkelOwen", playerKunkelOwen),("LazyMinMax", playerLazyMinMax),("Mikey", playerMikey),("Mugatu", playerMugatu),("Notemotives", playerNotemotives),("Rooster", playerRooster),("SashankMichael", playerSashankMichael),("Sigma", playerSigma),("TeamSinister", playerTeamSinister),("Theta", playerTheta)
+  ("BestNext", playerBestNext),("BlindGuess", playerBlindGuess),("HeadlessChicken", playerHeadlessChicken),("Hybrid", playerHybrid),("Kevin", playerKevin),("KunkelOwen", playerKunkelOwen),("LazyMinMax", playerLazyMinMax),("Mikey", playerMikey),("Mugatu", playerMugatu),("Notemotives", playerNotemotives),("Rooster", playerRooster),("SashankMichael", playerSashankMichael),("Sigma", playerSigma),("TeamSinister", playerTeamSinister),("Theta", playerTheta)
   ]
