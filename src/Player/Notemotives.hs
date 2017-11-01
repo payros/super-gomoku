@@ -17,26 +17,26 @@ playerNotemotives = Player computeMove "Notemotives"
 ----------------------------------------------------------------------------------------------------------------
 closeMoves :: Board -> [Move]
 closeMoves board  = giveBack board c
-	where
-		c = [ij | (ij, EmptyTile) <- board]
+        where
+                c = [ij | (ij, EmptyTile) <- board]
 
 giveBack :: Board -> [Move] -> [Move]
 giveBack board [] = []
 giveBack board (b:bs) 
-	| evaluate board b == True = b:giveBack board bs
-	| otherwise = giveBack board bs 
+        | evaluate board b == True = b:giveBack board bs
+        | otherwise = giveBack board bs
 
 evaluate :: Board -> Move -> Bool
 evaluate board (a,b) 
-	| board??(a-1,b+1) /= EmptyTile = True
-	| board??(a-1,b) /= EmptyTile = True
-	| board??(a-1,b-1) /= EmptyTile = True
-	| board??(a+1,b+1) /= EmptyTile = True
-	| board??(a+1,b) /= EmptyTile = True
-	| board??(a+1,b-1) /= EmptyTile = True
-	| board??(a,b+1) /= EmptyTile = True
-	| board??(a,b-1) /= EmptyTile = True
-	| otherwise = False
+        | board??(a-1,b+1) /= EmptyTile = True
+        | board??(a-1,b) /= EmptyTile = True
+        | board??(a-1,b-1) /= EmptyTile = True
+        | board??(a+1,b+1) /= EmptyTile = True
+        | board??(a+1,b) /= EmptyTile = True
+        | board??(a+1,b-1) /= EmptyTile = True
+        | board??(a,b+1) /= EmptyTile = True
+        | board??(a,b-1) /= EmptyTile = True
+        | otherwise = False
 
 {-
 -- Modifies old closeMoves list updating it with the new move
@@ -290,7 +290,7 @@ evaluateScore board symbol
     
     scoreDiagN1 =  sum $ map (\y -> countDiagN (Pos 1 y) symbol board 0) [2..dimM dim]--0
     scoreDiagN2 =  sum $ map (\x -> countDiagN (Pos x 1) symbol board 0) [1..dimM dim]
-					
+
     scoreDiagP1 =  sum $ map (\y -> countDiagP (Pos (dimN dim) y) symbol board 0) [2..dimN dim]--0
     scoreDiagP2 =  sum $ map (\x -> countDiagP (Pos x 1) symbol board 0)  [dimN dim, dimN dim -1..1]
 

@@ -32,7 +32,7 @@ evaluateBoardMax depth tile board
   | otherwise
   = minimum (map (evaluateBoardMin (depth+1) (flipTile tile) . put board (flipTile tile)) moves)
   where
-  	moves       = filter (unisolatedMove board) (validMoves board)
+        moves       = filter (unisolatedMove board) (validMoves board)
 
 -- the score of board on tile, if such score exists, otherwise
 -- the `maximum` score of `evaluateBoardMax` on the flipped tile, for all the valid moves of the flipped tile
@@ -46,7 +46,7 @@ evaluateBoardMin depth tile board
   | otherwise
   = maximum (map (evaluateBoardMax (depth+1) (flipTile tile) . put board (flipTile tile)) moves)
   where
-  	moves       = filter (unisolatedMove board) (validMoves board)
+        moves       = filter (unisolatedMove board) (validMoves board)
 
 -- Non-recursive Attack evaluation
 evaluateAttack :: Tile -> Board -> Int
