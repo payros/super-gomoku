@@ -111,6 +111,10 @@ instance Show Tile where
   show X         = "  X  "
   show O         = "  O  "
 
+--instance Read Tile where
+--  read ' ' = EmptyTile
+--  read 'X' = X         
+--  read 'O' = O        
 
 showBoard :: Board -> String
 showBoard b = let blist = boardAsList b

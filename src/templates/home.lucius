@@ -89,6 +89,19 @@ aside {
     		cursor:pointer;
 		}
 
+		li.highlight {
+			transform: scale(1.4,1.4);
+			padding:10px 20px;
+			background-color:#f8f8f8;
+			border:2px solid;
+			border-radius:10px;
+			pointer-events:none;
+			text-align: center;
+			text-shadow:none;
+			box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+			z-index:100;
+		}
+
 		li:hover {
 			transform: scale(1.2,1.2);
 			text-shadow: 0 14px 28px rgba(0,0,0,0.14), 0 10px 10px rgba(0,0,0,0.10);
@@ -212,14 +225,14 @@ h2.scoreboard {
 
     input {
 	    font-size: 35px;
-	    max-width: 250px;
+	    max-width: 280px;
 	    border: none;
 	    margin: 0 20px;
 	    cursor:pointer;
 	    border-radius: 10px;
     	padding: 5px 10px;
     	transition:all 0.2s;
-    	/*text-align: center;*/
+    	// text-align: center;
     }
 
     input:hover {
@@ -244,6 +257,20 @@ h2.scoreboard {
     input.o {
 		color:#{oColor};    	
     }
+
+    input.droppable {
+    	border:4px dashed;
+    	background:#fffce5;
+    }
+
+
+    input.x.droppable:hover {
+    	background-color:#{xColor};
+    }
+
+    input.o.droppable:hover {
+		background-color:#{oColor};    	
+    }
 }
 
 
@@ -267,6 +294,7 @@ h2.scoreboard {
     	display:none;
     	font-size: 40px;
     	color: #fff;
+    	margin-top:0;
 
     	span.danger {
     		background-color: #{dangerColor};

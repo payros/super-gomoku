@@ -13,9 +13,6 @@ import Data.Time.Units (Second)
 import Data.List  (lookup)
 
 
-
-
-
 main :: IO ()
 main = do
     (player1,player2) <-  getArgs >>= getPlayers

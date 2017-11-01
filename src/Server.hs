@@ -3,6 +3,7 @@
 {-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE DeriveGeneric         #-}
+
 import Yesod
 import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
 import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug, rawJS)
@@ -36,6 +37,9 @@ instance Yesod GomokuServer
 boardRows = [1..dimM dim]
 boardCols = [1..dimN dim]
 
+mimeType :: ContentType
+mimeType = "text/haskell-show"
+
 getHomeR :: Handler Html
 getHomeR = defaultLayout $ do
         setTitle "Super Gomoku"
@@ -45,10 +49,6 @@ getHomeR = defaultLayout $ do
         $(whamletFile "./src/templates/home.hamlet")
         toWidget $(luciusFileReload "./src/templates/home.lucius")
         toWidget $(juliusFileReload "./src/templates/home.julius")
-
-
-mimeType :: ContentType
-mimeType = "text/haskell-show"
 
 --postNextMoveR :: Handler Value
 --postNextMoveR = returnJson person
