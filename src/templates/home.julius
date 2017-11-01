@@ -199,7 +199,7 @@ $(function(){
 
 	////**** AJAX REQUESTS ****////
 
-	//Get a moved from a Bot
+	//Get a move from a Bot
 	function getMove(){
 		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':BOARD, 'turn':TURN }, function(data){
 			console.log(data);
