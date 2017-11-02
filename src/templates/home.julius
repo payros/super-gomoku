@@ -213,8 +213,10 @@ $(function(){
 
 	//Get a moved from a Bot
 	function botMove(){
-		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':BOARD, 'turn':TURN }, function(move){
-			if (TIME > 0) putMove(move);
+		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':String(BOARD), 'turn':TURN }, function(move){
+            var moveAsStrArray = move.substring(1, move.length - 1).split(',');
+            var parsedMove = [parseInt(moveAsStrArray[0]), parseInt(moveAsStrArray[1])];
+			if (TIME > 0) putMove(parsedMove);
 		});
 	}
 
