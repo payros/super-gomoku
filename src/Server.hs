@@ -27,7 +27,7 @@ data Person = Person
 
 mkYesod "GomokuServer" [parseRoutes|
 /         HomeR     GET
---/nextMove NextMoveR POST
+/nextMove NextMoveR POST
 |]
 
 instance FromJSON Person
@@ -50,51 +50,45 @@ getHomeR = defaultLayout $ do
         toWidget $(luciusFileReload "./src/templates/home.lucius")
         toWidget $(juliusFileReload "./src/templates/home.julius")
 
---postNextMoveR :: Handler Value
---postNextMoveR = returnJson person
---	where
---	    person = Person "Michael" 28
+postNextMoveR :: Handler String
+postNextMoveR = do
+    maybePlayer <- lookupPostParam "player"
+    maybeBoard <- lookupPostParam "board"
+    maybeTurn <- lookupPostParam "turn"
+    maybeStrategy <- case maybePlayer of
+        Nothing -> error "Invalid Player Provided."
+        Just p -> return $ lookup (unpack p) players
+    board <- case maybeBoard of
+        Nothing -> error "Invalid Board Provided."
+        Just b -> return $ readBoard $ unpack b
+    turn <- case maybeTurn of
+        Nothing -> error "Invalid Turn Provided."
+        Just t -> return $ readTile $ unpack t
+    case maybeStrategy of
+        Nothing -> error "No bot with provided name."
+        Just strategy -> liftIO $ moveToZeroIndexedStr $ playerMove strategy turn board
 
--- postNextMoveR :: Handler TypedContent
--- postNextMoveR = do
---   params <- getPostParams
---   moveReq <- fromJSON params
---   parsedBoard <- newFUnction board
--- --   post <- requireJsonBody :: Handler Post
---   -- do the read thing
---   return $ TypedContent mimeType $ toContent $ show move
---   where
---     move = (4,5)
+-- Subtracts one from row and col of move so it is 0-indexed, and converts to an IO String
+moveToZeroIndexedStr :: (IO Move) -> (IO String)
+moveToZeroIndexedStr move = do
+    m <- move
+    return $ show ((fst m) - 1, (snd m) - 1)
 
--- define move's show '45'
+readTile :: String -> Tile
+readTile s
+    | s == "X"  = X
+    | s == "O"  = O
+    | otherwise = EmptyTile
 
-data MoveRequest =
-  MoveRequest { player :: String
-              , board  :: [String]
-              , tile   :: String
-              } deriving (Show, Generic)
+readBoard :: String -> Board
+readBoard xs = readBoardHelper xs 1 1
 
-instance FromJSON MoveRequest
-
--- write instance of read for tile
-
--- instance FromJSON MoveRequest where
---  parseJSON (Object v) =
---     MoveRequest <$> v .:? "player"
---                 <*> v .:  "lastName"
---                 <*> v .:  "age"
---                 <*> v .:  "likesPizza"
--- instance FromJSON MoveRequest
--- instance ToJSON MoveRequest
-
-data MoveReply =
-  MoveReply { move :: Move
-            } deriving (Show,Generic)
-
-instance ToJSON MoveReply
-
--- getJSON :: IO B.ByteString
--- getJSON = B.readFile jsonFile
+readBoardHelper :: String -> Int -> Int -> Board
+readBoardHelper [] _ _ = []
+readBoardHelper (x:xs) row col
+    | x == ','          = readBoardHelper xs row col
+    | col == (dimM dim) = ((row, col), readTile [x]):(readBoardHelper xs (row + 1)     1    )
+    | otherwise         = ((row, col), readTile [x]):(readBoardHelper xs    row    (col + 1))
 
 
 main :: IO ()
