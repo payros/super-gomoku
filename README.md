@@ -7,8 +7,8 @@ When Completed, this project will let users:
 * Play Gomoku in three modes:
 
   - [x] Human X Human (Local)
-  - [ ] Human X Bot
-  - [ ] Bot X Bot
+  - [x] Human X Bot
+  - [x] Bot X Bot
 
 * Define the board dimensions and number of aligned pieces needed to win
 
