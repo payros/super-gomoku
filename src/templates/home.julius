@@ -64,12 +64,24 @@ $(function(){
 		return BOARD[move[0]][move[1]] === ' ';
 	}
 
+	//Checks if the current player is a bot
+	function isBot(){
+		return BOTS.indexOf(PLAYERS[TURN === 'X' ? 0 : 1]) > -1;
+	}
+
 	function startTimer() {
 		//Stop timer if it's already running
 		stopTimer();
 
 		if(TIMEOUT !== 0) {
-			TIMER = setInterval(decrementTimer, 1000);			
+			TIMER = setInterval(decrementTimer, 1000);
+			
+			if(isBot()) {
+				botMove();
+				//TO DO Disable board
+			} else {
+				//TO DO Enable board
+			}	
 		}
 	}
 
@@ -200,9 +212,9 @@ $(function(){
 	////**** AJAX REQUESTS ****////
 
 	//Get a moved from a Bot
-	function getMove(){
-		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':BOARD, 'turn':TURN }, function(data){
-			console.log(data);
+	function botMove(){
+		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':BOARD, 'turn':TURN }, function(move){
+			if (TIME > 0) putMove(move);
 		});
 	}
 
@@ -292,6 +304,7 @@ $(function(){
 	var WHO_STARTS_NEXT = 'O';
 	var SCORES = [0,0];
 	var PLAYERS = ['Player1', 'Player2'];
+	var BOTS = #{rawJS $ show $ playersList};
 
 
 	////**** EVENT HANDLERS ****////
@@ -306,7 +319,7 @@ $(function(){
 	$(window).resize(resizeTiles);
 
 	
-	////**** EXECUTE PAGE SCRIPTS ****////
+	////**** RUN PAGE SCRIPTS ****////
 	resizeTiles();
 
 	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)

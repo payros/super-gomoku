@@ -36,6 +36,7 @@ instance Yesod GomokuServer
 
 boardRows = [1..dimM dim]
 boardCols = [1..dimN dim]
+playersList = [fst x | x <- players] 
 
 mimeType :: ContentType
 mimeType = "text/haskell-show"
@@ -56,4 +57,4 @@ getHomeR = defaultLayout $ do
 --	    person = Person "Michael" 28
 
 main :: IO ()
-main = warp 3000 GomokuServer
+main = warp 4000 GomokuServer
