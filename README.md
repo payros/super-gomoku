@@ -25,4 +25,4 @@ Because this project is currently in early development, it's not deployed on a p
 * Clone/Download the project
 * Run `stack install` in the project's root directory
 * Run `gomoku` (You may have to add the bin directory to your shell path)
-* Open a browser window and visit `localhost:3000` or `127.0.0.1:3000`
+* Open a browser window and visit `localhost:4000` or `127.0.0.1:4000`
