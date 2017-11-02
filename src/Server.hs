@@ -2,41 +2,29 @@
 {-# LANGUAGE QuasiQuotes           #-}
 {-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeFamilies          #-}
-{-# LANGUAGE DeriveGeneric         #-}
 
 import Yesod
 import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
 import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug, rawJS)
-import Data.Text (Text, unpack)
-import Data.Maybe
-import Data.Aeson
-import Data.Typeable
-import Debug.Trace
-import GHC.Generics
+import Data.Text (unpack)
+-- import Debug.Trace
 
 import Players
 import Types
 
 data GomokuServer = GomokuServer
 
-data Person = Person
-    { name :: Text
-    , age  :: Int
-    }
-    deriving (Show, Generic)
-
 mkYesod "GomokuServer" [parseRoutes|
 /         HomeR     GET
 /nextMove NextMoveR POST
 |]
 
-instance FromJSON Person
-instance ToJSON Person
 instance Yesod GomokuServer
 
+-- Variables accessed by front-end
 boardRows = [1..dimM dim]
 boardCols = [1..dimN dim]
-playersList = [fst x | x <- players] 
+playersList = [fst x | x <- players]
 
 mimeType :: ContentType
 mimeType = "text/haskell-show"
