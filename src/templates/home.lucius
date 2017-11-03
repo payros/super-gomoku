@@ -90,6 +90,7 @@ aside {
 		}
 
 		li.highlight {
+			display:block;
 			transform: scale(1.4,1.4);
 			padding:10px 20px;
 			background-color:#f8f8f8;
@@ -100,6 +101,7 @@ aside {
 			text-shadow:none;
 			box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 			z-index:100;
+			width:100%;
 		}
 
 		li:hover {
@@ -352,13 +354,15 @@ table {
 
 	td {
 		border:2px solid #{borderColor};
+		padding:0;
 		background:#{bgColor};
     	font-size: 40px;
 	    font-weight: bold;
 	    text-align: center;
 		cursor:pointer;
 		transform: rotateY(0deg);
-		transition: transform 0.25s linear, background 0s 0.125s;	    
+		transition: transform 0.25s linear, background 0s 0.125s;
+		box-sizing:border-box;	    
 	}
 
 	td.x {
@@ -439,6 +443,10 @@ table.ended {
 	td {
 		cursor:default;
 	}
+}
+
+table.disabled {
+	pointer-events:none;
 }
 
 #timer {
