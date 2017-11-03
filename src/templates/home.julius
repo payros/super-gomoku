@@ -1,13 +1,31 @@
+//Set default settings
+var SETTINGS = {
+	"BOARD_DIMENSIONS":[#{rawJS $ show $ dimM dim}, #{rawJS $ show $ dimN dim}],
+	"TILES_TO_WIN":#{rawJS $ show $ dimK dim},
+	"TIMEOUT":30 //In seconds	
+};
+
 //When page ready
 $(function(){
+
+	////**** GLOBAL VARIABLES ****////
+
+	var TIME, TIMER;
+	var BOARD = makeEmptyBoard();
+	var TURN = 'X';
+	var WHO_STARTS_NEXT = 'O';
+	var SCORES = [0,0];
+	var PLAYERS = ['Player1', 'Player2'];
+	var BOTS = #{rawJS $ show $ playersList};
+	SETTINGS = localStorage.settings ? JSON.parse(localStorage.settings) : SETTINGS;
 
 	////**** UTILITY FUNCTIONS ****////
 
 	function makeEmptyBoard() {
 		var board = [];
-		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
+		for (row=0; row<SETTINGS.BOARD_DIMENSIONS[0]; row++) {
 			board.push([]);
-			for (col=0; col<BOARD_DIMENSIONS[1]; col++) {
+			for (col=0; col<SETTINGS.BOARD_DIMENSIONS[1]; col++) {
 				board[row].push(' ');
 			}
 		}
@@ -17,8 +35,8 @@ $(function(){
 	//Returns an array of winning tiles or an empty array if there are no winners
 	function tileWins() {
 		//For every tile on the board, check if it forms a winning line
-		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
-			for (col=0; col<BOARD_DIMENSIONS[0]; col++) {
+		for (row=0; row<SETTINGS.BOARD_DIMENSIONS[0]; row++) {
+			for (col=0; col<SETTINGS.BOARD_DIMENSIONS[0]; col++) {
 				var startTile = BOARD[row][col];
 
 				if(startTile !== ' ') {
@@ -28,10 +46,10 @@ $(function(){
 					var dMoves = [];
 
 					//Check if the start tile forms a winning
-					for(inc=0; inc<TILES_TO_WIN; inc++) {
-						var validRow = (row+inc) < BOARD_DIMENSIONS[0];
-						var validCol = (col+inc) < BOARD_DIMENSIONS[1];
-						var validCol2 = (col-inc) < BOARD_DIMENSIONS[1];
+					for(inc=0; inc<SETTINGS.TILES_TO_WIN; inc++) {
+						var validRow = (row+inc) < SETTINGS.BOARD_DIMENSIONS[0];
+						var validCol = (col+inc) < SETTINGS.BOARD_DIMENSIONS[1];
+						var validCol2 = (col-inc) < SETTINGS.BOARD_DIMENSIONS[1];
 
 						if (validRow && BOARD[row+inc][col] === startTile) hMoves.push([row+inc, col]);
 						if (validCol && BOARD[row][col+inc] === startTile) vMoves.push([row, col+inc]);
@@ -39,10 +57,10 @@ $(function(){
 						if (validRow && validCol2 && BOARD[row+inc][col-inc] === startTile) dMoves.push([row+inc, col-inc]);
 					}
 
-					if(hMoves.length === TILES_TO_WIN) return hMoves;
-					if(vMoves.length === TILES_TO_WIN) return vMoves;	
-					if(aMoves.length === TILES_TO_WIN) return aMoves;	
-					if(dMoves.length === TILES_TO_WIN) return dMoves;						
+					if(hMoves.length === SETTINGS.TILES_TO_WIN) return hMoves;
+					if(vMoves.length === SETTINGS.TILES_TO_WIN) return vMoves;	
+					if(aMoves.length === SETTINGS.TILES_TO_WIN) return aMoves;	
+					if(dMoves.length === SETTINGS.TILES_TO_WIN) return dMoves;						
 				}
 
 			}
@@ -52,8 +70,8 @@ $(function(){
 	}
 
 	function checkFull() {
-		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
-			for (col=0; col<BOARD_DIMENSIONS[1]; col++) {
+		for (row=0; row<SETTINGS.BOARD_DIMENSIONS[0]; row++) {
+			for (col=0; col<SETTINGS.BOARD_DIMENSIONS[1]; col++) {
 				if (BOARD[row][col] === ' ') return false;
 			}
 		}
@@ -61,8 +79,8 @@ $(function(){
 	}
 
 	function checkEmpty() {
-		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
-			for (col=0; col<BOARD_DIMENSIONS[1]; col++) {
+		for (row=0; row<SETTINGS.BOARD_DIMENSIONS[0]; row++) {
+			for (col=0; col<SETTINGS.BOARD_DIMENSIONS[1]; col++) {
 				if (BOARD[row][col] !== ' ') return false;
 			}
 		}
@@ -82,7 +100,7 @@ $(function(){
 		//Stop timer if it's already running
 		stopTimer();
 
-		if(TIMEOUT !== 0) {
+		if(SETTINGS.TIMEOUT !== 0) {
 			TIMER = setInterval(decrementTimer, 1000);
 			
 			if(isBot()) {
@@ -99,7 +117,7 @@ $(function(){
 
 	function stopTimer() {
 		clearInterval(TIMER);
-		TIME = TIMEOUT;
+		TIME = SETTINGS.TIMEOUT;
 		$('#timer').removeClass().text(TIME < 10 ? '0' + TIME : TIME);
 	}
 
@@ -182,9 +200,9 @@ $(function(){
 		BOARD = makeEmptyBoard();
 
 		var newTable = "";
-		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
+		for (row=0; row<SETTINGS.BOARD_DIMENSIONS[0]; row++) {
 			newTable += "<tr>";
-			for (col=0; col<BOARD_DIMENSIONS[1]; col++) {
+			for (col=0; col<SETTINGS.BOARD_DIMENSIONS[1]; col++) {
 				newTable += "<td></td>";
 			}
 			newTable += "</tr>";
@@ -203,7 +221,7 @@ $(function(){
 	//Resize the tiles to keep the board pixel size the same
 	function resizeTiles() {
 		totalW = $('section').width();
-		tileSize = totalW/Math.max(BOARD_DIMENSIONS[0],BOARD_DIMENSIONS[1]);
+		tileSize = totalW/Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1]);
 
 		$('td').css({'width':tileSize, 'height':tileSize, fontSize:tileSize*0.8});
 	}
@@ -230,6 +248,11 @@ $(function(){
             //Make sure the timer is still valid and the board hasn't been reset
 			if (TIME > 0 && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
 		});
+	}
+
+	//Update back-end settings using localStorage
+	function syncSettings(){
+		$.post('/syncSettings');
 	}
 
 
@@ -278,47 +301,37 @@ $(function(){
 		var newTimeout = $('#in_timeout').val();
 
 		if(newRow && !isNaN(newRow) && newRow >= 3 && newRow <= 20) {
-			BOARD_DIMENSIONS[0] = parseInt(newRow);
+			SETTINGS.BOARD_DIMENSIONS[0] = parseInt(newRow);
 		} else {
-			$('#in_row').val(BOARD_DIMENSIONS[0]);
+			$('#in_row').val(SETTINGS.BOARD_DIMENSIONS[0]);
 		}
 			
 		if(newCol && !isNaN(newCol) && newCol >= 3 && newCol <= 20) {
-			BOARD_DIMENSIONS[1] = parseInt(newCol);
+			SETTINGS.BOARD_DIMENSIONS[1] = parseInt(newCol);
 		} else {
-			$('#in_col').val(BOARD_DIMENSIONS[1]);
+			$('#in_col').val(SETTINGS.BOARD_DIMENSIONS[1]);
 		}
 
-		if(newTilesToWin && !isNaN(newTilesToWin) && newTilesToWin >= 3 && newTilesToWin <= Math.max(BOARD_DIMENSIONS[0],BOARD_DIMENSIONS[1])) {
-			TILES_TO_WIN = parseInt(newTilesToWin);
+		if(newTilesToWin && !isNaN(newTilesToWin) && newTilesToWin >= 3 && newTilesToWin <= Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1])) {
+			SETTINGS.TILES_TO_WIN = parseInt(newTilesToWin);
 		} else {
-			$('#in_tiles_to_win').val(Math.min(TILES_TO_WIN, Math.max(BOARD_DIMENSIONS[0],BOARD_DIMENSIONS[1])));
+			$('#in_tiles_to_win').val(Math.min(SETTINGS.TILES_TO_WIN, Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1])));
 		}
 
 		if(newTimeout && !isNaN(newTimeout) && newTimeout >= 0) {
-			TIMEOUT = parseInt(newTimeout);
+			SETTINGS.TIMEOUT = parseInt(newTimeout);
 		} else {
-			$('#in_timeout').val(TIMEOUT);
+			$('#in_timeout').val(SETTINGS.TIMEOUT);
 		}
-			
-		//TO DO Update backend settings
+		
+		//Save to browser storage	
+		localStorage.settings = JSON.stringify(SETTINGS);
+
+		//Update settings on the backend
+		syncSettings();
 
 		resizeBoard();
 	}
-
-
-	////**** GLOBAL VARIABLES ****////
-
-	var TIME, TIMER;
-	var BOARD_DIMENSIONS = [#{rawJS $ show $ dimM dim}, #{rawJS $ show $ dimN dim}];
-	var TILES_TO_WIN = #{rawJS $ show $ dimK dim};
-	var TIMEOUT = 30; //In seconds
-	var BOARD = makeEmptyBoard();
-	var TURN = 'X';
-	var WHO_STARTS_NEXT = 'O';
-	var SCORES = [0,0];
-	var PLAYERS = ['Player1', 'Player2'];
-	var BOTS = #{rawJS $ show $ playersList};
 
 
 	////**** EVENT HANDLERS ****////
@@ -337,5 +350,5 @@ $(function(){
 	resizeTiles();
 
 	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)
-	$('#in_timeout').val(TIMEOUT);
+	$('#in_timeout').val(SETTINGS.TIMEOUT);
 });
