@@ -60,6 +60,15 @@ $(function(){
 		return true;
 	}
 
+	function checkEmpty() {
+		for (row=0; row<BOARD_DIMENSIONS[0]; row++) {
+			for (col=0; col<BOARD_DIMENSIONS[1]; col++) {
+				if (BOARD[row][col] !== ' ') return false;
+			}
+		}
+		return true;
+	}
+
 	function valid(move) {
 		return BOARD[move[0]][move[1]] === ' ';
 	}
@@ -78,9 +87,9 @@ $(function(){
 			
 			if(isBot()) {
 				botMove();
-				//TO DO Disable board
+				$('table').addClass('disabled');
 			} else {
-				//TO DO Enable board
+				$('table').removeClass('disabled');
 			}	
 		}
 	}
@@ -116,6 +125,7 @@ $(function(){
 		$('.game-overlay h3, #play-again').hide();
 		$('#start-game').show();
 		$('.game-overlay').removeClass('x-wins o-wins').fadeIn(1000);
+		$('table').addClass('reset');
 	}
 
 	//Resets the game declaring an outcome
@@ -159,7 +169,8 @@ $(function(){
 			} else {
 				$('table').toggleClass('o-turn x-turn');
 				TURN = TURN === 'X' ? 'O' : 'X';
-				startTimer();
+				//If the game is not in a reset state, keep going
+			 	startTimer();
 			}
 		} else {
 			//TO DO Handle invalid move. End game, other player wins
@@ -215,7 +226,9 @@ $(function(){
 	function botMove(){
 		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':String(BOARD), 'turn':TURN }, function(rawMove){
             var move = eval(rawMove.replace("(","[").replace(")","]"));
-			if (TIME > 0) putMove(move);
+            var moveDelay = checkEmpty() ? 1300 : 300;
+            //Make sure the timer is still valid and the board hasn't been reset
+			if (TIME > 0 && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
 		});
 	}
 
