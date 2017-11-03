@@ -2,7 +2,7 @@
 var SETTINGS = {
 	"BOARD_DIMENSIONS":[#{rawJS $ show $ dimM dim}, #{rawJS $ show $ dimN dim}],
 	"TILES_TO_WIN":#{rawJS $ show $ dimK dim},
-	"TIMEOUT":30 //In seconds	
+	"TIMEOUT":30 //In seconds - TO DO, pull this from the backend once it's stored there	
 };
 
 //When page ready
@@ -226,6 +226,16 @@ $(function(){
 		$('td').css({'width':tileSize, 'height':tileSize, fontSize:tileSize*0.8});
 	}
 
+	//Refreshes UI values to match SETTINGS
+	function refreshValues() {
+		$('#in_row').val(SETTINGS.BOARD_DIMENSIONS[0]);
+		$('#in_col').val(SETTINGS.BOARD_DIMENSIONS[1]);
+		$('#in_timeout').val(SETTINGS.TIMEOUT);
+		$('#in_tiles_to_win').val(SETTINGS.TILES_TO_WIN);
+		
+		$('#timer').removeClass().text(SETTINGS.TIMEOUT);
+	}
+
 	function decrementTimer(){
 		TIME--;
 		$('#timer').text(TIME < 10 ? '0' + TIME : TIME);
@@ -347,8 +357,9 @@ $(function(){
 
 	
 	////**** RUN PAGE SCRIPTS ****////
+	refreshValues();
 	resizeTiles();
 
 	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)
-	$('#in_timeout').val(SETTINGS.TIMEOUT);
+	
 });
