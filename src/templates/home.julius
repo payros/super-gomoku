@@ -88,9 +88,6 @@ $(function(){
 	}
 
 	function valid(move) {
-		console.log(SETTINGS.BOARD_DIMENSIONS[0] > move[0],
-					SETTINGS.BOARD_DIMENSIONS[1] > move[1],
-					BOARD[move[0]][move[1]]);
 		return SETTINGS.BOARD_DIMENSIONS[0] > move[0] && 
 			   SETTINGS.BOARD_DIMENSIONS[1] > move[1] && 
 			   BOARD[move[0]][move[1]] === ' ';
@@ -198,7 +195,6 @@ $(function(){
 	}
 
 	function putMove(move) {
-		console.log(TURN, move);
 		if(valid(move)) {
 			BOARD[move[0]][move[1]] = TURN;
 			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN);
@@ -213,7 +209,6 @@ $(function(){
 			 	startTimer();
 			}
 		} else {
-			console.log("Not a valid move");
 			endGame('invalidMove');
 		}
 	}
@@ -325,7 +320,7 @@ $(function(){
 		var row = $(td).parent('tr').index();
 		var col = $(td).index();
 
-		if (!table.hasClass('ended')) putMove([row,col]);	
+		if (!table.hasClass('ended') && valid([row,col])) putMove([row,col]);	
 	}
 
 	function saveSettings() {
