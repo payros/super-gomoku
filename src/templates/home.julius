@@ -220,6 +220,7 @@ $(function(){
 
 	//Resize the tiles to keep the board pixel size the same
 	function resizeTiles() {
+		console.log($('section').width());
 		totalW = $('section').width();
 		tileSize = totalW/Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1]);
 
@@ -232,7 +233,7 @@ $(function(){
 		$('#in_col').val(SETTINGS.BOARD_DIMENSIONS[1]);
 		$('#in_timeout').val(SETTINGS.TIMEOUT);
 		$('#in_tiles_to_win').val(SETTINGS.TILES_TO_WIN);
-		
+
 		$('#timer').removeClass().text(SETTINGS.TIMEOUT);
 	}
 
@@ -357,8 +358,9 @@ $(function(){
 
 	
 	////**** RUN PAGE SCRIPTS ****////
+	//We may nto have to run this for the first time if we get localStorage on the back-end and load the right values directly from there
 	refreshValues();
-	resizeTiles();
+	resizeBoard();
 
 	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)
 	
