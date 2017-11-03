@@ -88,7 +88,12 @@ $(function(){
 	}
 
 	function valid(move) {
-		return BOARD[move[0]][move[1]] === ' ';
+		console.log(SETTINGS.BOARD_DIMENSIONS[0] > move[0],
+					SETTINGS.BOARD_DIMENSIONS[1] > move[1],
+					BOARD[move[0]][move[1]]);
+		return SETTINGS.BOARD_DIMENSIONS[0] > move[0] && 
+			   SETTINGS.BOARD_DIMENSIONS[1] > move[1] && 
+			   BOARD[move[0]][move[1]] === ' ';
 	}
 
 	//Checks if the current player is a bot
@@ -147,23 +152,41 @@ $(function(){
 	}
 
 	//Resets the game declaring an outcome
-	function endGame(winningMoves) {
+	function endGame(reason, winningMoves) {
+		var winnerClass, outcomeText;
+
 		if(TIME > 0 ) stopTimer();
 
-		var winnerClass = '';
-		var outcomeText = "It's a Tie";
+		switch(reason) {
 
-		//If there is a clear winner
-		if(winningMoves.length || !checkFull()) {
-			winnerClass = TURN.toLowerCase() + '-wins';
-			outcomeText = PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
-			SCORES[TURN === 'X' ? 0 : 1]++;
-			$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
+			case 'winningMove':
+				winnerClass = TURN.toLowerCase() + '-wins';
+				outcomeText = PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
+				SCORES[TURN === 'X' ? 0 : 1]++;
+				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
+				for (var i = 0; i < winningMoves.length; i++) {
+					$('table>tbody>tr:nth-child('+ (winningMoves[i][0]+1) +')>td:nth-child(' + (winningMoves[i][1]+1) + ')').addClass('win');
+				}
+				break;
 
-			//If the player timed out
-			if(!winningMoves.length) {
-				outcomeText = PLAYERS[TURN === 'X' ? 1 : 0] + ' <span class="danger">Timed Out!</span><br><br>' + outcomeText;
-			}
+			case 'timeout':
+				winnerClass = TURN.toLowerCase() + '-wins';
+				outcomeText = PLAYERS[TURN === 'X' ? 1 : 0] + ' <span class="danger">Timed Out!</span><br><br>' + PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
+				SCORES[TURN === 'X' ? 0 : 1]++;
+				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
+				break;
+
+			case 'invalidMove':
+				winnerClass = TURN === 'X' ? 'o-wins' : 'x-wins';
+				outcomeText =  '<span class="danger">Invalid Move</span> by ' + PLAYERS[TURN === 'X' ? 0 : 1] + "<br><br>" + PLAYERS[TURN === 'X' ? 1 : 0] + " Wins";
+				SCORES[TURN === 'X' ? 1 : 0]++;
+				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
+				break;
+
+			case 'tie':
+				winnerClass = '';
+				outcomeText = "It's a Tie";
+				break;
 		}
 
 		$('.game-overlay h3').html(outcomeText).show();
@@ -171,19 +194,18 @@ $(function(){
 		$('#play-again').show();
 		$('#start-game').hide();
 		$('table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
-		for (var i = 0; i < winningMoves.length; i++) {
-			$('table>tbody>tr:nth-child('+ (winningMoves[i][0]+1) +')>td:nth-child(' + (winningMoves[i][1]+1) + ')').addClass('win');
-		}
+
 	}
 
 	function putMove(move) {
+		console.log(TURN, move);
 		if(valid(move)) {
 			BOARD[move[0]][move[1]] = TURN;
 			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN);
 
 			var winningMoves = tileWins();
 			if(checkFull() || winningMoves.length) {
-				endGame(winningMoves);
+				endGame(winningMoves.length ? 'winningMove' : 'tie', winningMoves);
 			} else {
 				$('table').toggleClass('o-turn x-turn');
 				TURN = TURN === 'X' ? 'O' : 'X';
@@ -191,7 +213,8 @@ $(function(){
 			 	startTimer();
 			}
 		} else {
-			//TO DO Handle invalid move. End game, other player wins
+			console.log("Not a valid move");
+			endGame('invalidMove');
 		}
 	}
 
@@ -220,7 +243,6 @@ $(function(){
 
 	//Resize the tiles to keep the board pixel size the same
 	function resizeTiles() {
-		console.log($('section').width());
 		totalW = $('section').width();
 		tileSize = totalW/Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1]);
 
@@ -243,7 +265,7 @@ $(function(){
 		if(TIME <= 10) $('#timer').addClass('danger');
 		if(TIME === 0) {
 			TURN = TURN === 'X' ? 'O' : 'X';
-			endGame([]);
+			endGame('timeout');
 			clearInterval(TIMER);
 		}
 	}
@@ -256,6 +278,7 @@ $(function(){
 		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':String(BOARD), 'turn':TURN }, function(rawMove){
             var move = eval(rawMove.replace("(","[").replace(")","]"));
             var moveDelay = checkEmpty() ? 1300 : 300;
+          
             //Make sure the timer is still valid and the board hasn't been reset
 			if (TIME > 0 && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
 		});
