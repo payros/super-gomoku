@@ -2,11 +2,11 @@
     <h1>Super <span>Gomoku</span>
     <h2 class="scoreboard">
         
-        <input type="text" class="x" value="Player1">
+        <input type="text" class="x typeahead" value="Player1">
         <i class="fa fa-desktop x">
         <span class="score"> 0 x 0 </span>
         <i class="fa fa-desktop o">
-        <input type="text" class="o" value="Player2">
+        <input type="text" class="o typeahead" value="Player2">
         
 <aside class="settings">
     <h2><i class="fa fa-cog"></i> Settings

@@ -314,7 +314,6 @@ $(function(){
 		//If the name is valid, update
 		if(newName && newName.length) {
 			PLAYERS[playerIdx] = newName;
-			console.log(BOTS.indexOf(newName));
 			if(isBot(newName)) {
 				$(el.target).addClass('bot');
 				$(iconClass).fadeIn().css("display","inline");;
@@ -405,6 +404,15 @@ $(function(){
 	//We may nto have to run this for the first time if we get localStorage on the back-end and load the right values directly from there
 	refreshValues();
 	resizeBoard();
+
+	$('.typeahead').typeahead({
+		minLength: 2,
+		fitToElement:true,
+		source: BOTS,
+		afterSelect: function(){
+			$(this.$element).blur();
+		}
+	});
 
 	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)
 	
