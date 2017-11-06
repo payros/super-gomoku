@@ -1,8 +1,15 @@
 <header>
     <h1>Super <span>Gomoku</span>
-    <h2 class="scoreboard"><input type="text" class="x" value="Player1"><span class="score"> 0 x 0 </span><input type="text" class="o" value="Player2">
+    <h2 class="scoreboard">
+        
+        <input type="text" class="x" value="Player1">
+        <i class="fa fa-desktop x">
+        <span class="score"> 0 x 0 </span>
+        <i class="fa fa-desktop o">
+        <input type="text" class="o" value="Player2">
+        
 <aside class="settings">
-    <h2>Settings
+    <h2><i class="fa fa-cog"></i> Settings
     <h4>Board Dimensions
     <span><input id="in_row" type="number" value="#{dimM dim}" min="3" max="20"> x <input id="in_col" type="number" value="#{dimN dim}" min="3" max="20">
     <h4>Tiles to Win
@@ -24,7 +31,7 @@
                         <td>
     <h2 id="timer">30
 <aside class="bots">
-    <h2>Bots
+    <h2>Bots <i class="fa fa-desktop"></i>
     <ul>
         $forall player <- players
             <li>#{fst player}

@@ -93,9 +93,10 @@ $(function(){
 			   BOARD[move[0]][move[1]] === ' ';
 	}
 
-	//Checks if the current player is a bot
-	function isBot(){
-		return BOTS.indexOf(PLAYERS[TURN === 'X' ? 0 : 1]) > -1;
+	//Checks if the player is a bot
+	function isBot(player){
+		var playerName = player || PLAYERS[TURN === 'X' ? 0 : 1];
+		return BOTS.indexOf(playerName) > -1;
 	}
 
 	function startTimer() {
@@ -197,7 +198,7 @@ $(function(){
 	function putMove(move) {
 		if(valid(move)) {
 			BOARD[move[0]][move[1]] = TURN;
-			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN);
+			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase(), 1000).text(TURN);
 
 			var winningMoves = tileWins();
 			if(checkFull() || winningMoves.length) {
@@ -288,9 +289,13 @@ $(function(){
 	////**** HANDLER FUNCTIONS ****////
 
 	function droppedBot( event, ui ) {
-		botName = ui.draggable.text();
+		var botName = ui.draggable.text();
+		var iconClass = $(this).hasClass('x') ? '.fa.x' : '.fa.o';
+
 		PLAYERS[$(this).hasClass('x') ? 0 : 1] = botName;
-		$(this).val(botName);
+
+		$(this).val(botName).addClass('bot');
+		$(iconClass).fadeIn().css("display","inline");
     }
 
     function stoppedDragging(){
@@ -304,14 +309,31 @@ $(function(){
 	function updateName(el){
 		var newName = $(el.target).val();
 		var playerIdx = $(el.target).hasClass('x') ? 0 : 1;
+		var iconClass = $(this).hasClass('x') ? '.fa.x' : '.fa.o';
 
 		//If the name is valid, update
 		if(newName && newName.length) {
 			PLAYERS[playerIdx] = newName;
+			console.log(BOTS.indexOf(newName));
+			if(isBot(newName)) {
+				$(el.target).addClass('bot');
+				$(iconClass).fadeIn().css("display","inline");;
+			} else {
+				$(el.target).removeClass('bot');
+				$(iconClass).fadeOut();
+			}
 		//Else, reset
 		} else {
 			$(el.target).val(PLAYERS[playerIdx]);
 		}
+	}
+
+	function blurInput(ev) {
+	    if(ev.which == 13) $(this).blur();  
+	}
+
+	function selectAll() {	
+		this.select();
 	}
 
 	function humanMove(el){
@@ -362,6 +384,10 @@ $(function(){
 		resizeBoard();
 	}
 
+	function resizeInput() {
+
+	}
+
 
 	////**** EVENT HANDLERS ****////
 
@@ -370,7 +396,7 @@ $(function(){
 	$('#start-game').click(function(){ startGame(false); });
 	// $('#start-game').click(getMove);
 	$('#play-again').click(function(){ startGame(true); });
-	$('input.x, input.o').focusout(updateName).droppable({drop:droppedBot, classes: { "ui-droppable-active": "droppable" }});
+	$('input.x, input.o').click(selectAll).keypress(blurInput).focusout(updateName).droppable({drop:droppedBot, classes: { "ui-droppable-active": "droppable" }});
   	$( ".bots li" ).draggable({revert:true, classes: { "ui-draggable-dragging": "highlight" },  stop:stoppedDragging });
 	$(window).resize(resizeTiles);
 

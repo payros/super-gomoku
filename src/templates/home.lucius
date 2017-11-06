@@ -61,6 +61,7 @@ aside {
     padding: 0 15px 30px;
     border-radius: 20px;
     box-sizing: border-box;
+    box-shadow: 0px 2px 14px rgba(0,0,0,0.1);
 
 	h2 {
 		color:#bbb;
@@ -211,11 +212,13 @@ h1 {
 	font-size:60px;
 	color:#{xColor};
 	margin:20px 0;
+	text-shadow: 2px 2px 0 #f1d5f6;
 
 	span {
 		font-size: 110%;
     	text-decoration: underline;
 		color:#{oColor};
+		text-shadow: 2px 2px 0 rgba(8, 212, 191, 0.5);
 	}
 }
 
@@ -227,6 +230,7 @@ h2.scoreboard {
 
     input {
 	    font-size: 35px;
+	    font-family: FontAwesome, Helvetica, sans-serif;
 	    max-width: 280px;
 	    border: none;
 	    margin: 0 20px;
@@ -251,6 +255,21 @@ h2.scoreboard {
     	/*text-align: left !important;*/
     }
 
+    .fa {
+    	font-size: 30px;
+    	display:none;    	
+    }
+
+    .fa.x {
+	    margin-right: 20px;
+	    color: #{xColor};
+    }
+
+    .fa.o {
+	    margin-left: 20px;
+	    color: #{oColor};
+    }
+
     input.x {
     	color:#{xColor};
     	text-align:right;
@@ -260,6 +279,10 @@ h2.scoreboard {
 		color:#{oColor};    	
     }
 
+    input.bot {
+    	margin:0;
+    }
+
     input.droppable {
     	border:4px dashed;
     	background:#fffce5;
@@ -267,10 +290,14 @@ h2.scoreboard {
 
 
     input.x.droppable:hover {
+    	color:#fff;
+    	border-color:#{xColor};
     	background-color:#{xColor};
     }
 
     input.o.droppable:hover {
+    	color:#fff;
+    	border-color:#{oColor};
 		background-color:#{oColor};    	
     }
 }
