@@ -152,7 +152,7 @@ $(function(){
 
 	//Resets the game declaring an outcome
 	function endGame(reason, winningMoves) {
-		var winnerClass, outcomeText;
+		var winnerClass, outcomeText, overlayDelay;
 
 		if(TIME > 0 ) stopTimer();
 
@@ -161,6 +161,7 @@ $(function(){
 			case 'winningMove':
 				winnerClass = TURN.toLowerCase() + '-wins';
 				outcomeText = PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
+				overlayDelay = 1000;
 				SCORES[TURN === 'X' ? 0 : 1]++;
 				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 				for (var i = 0; i < winningMoves.length; i++) {
@@ -171,6 +172,7 @@ $(function(){
 			case 'timeout':
 				winnerClass = TURN.toLowerCase() + '-wins';
 				outcomeText = PLAYERS[TURN === 'X' ? 1 : 0] + ' <span class="danger">Timed Out!</span><br><br>' + PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
+				overlayDelay = 0;
 				SCORES[TURN === 'X' ? 0 : 1]++;
 				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 				break;
@@ -178,6 +180,7 @@ $(function(){
 			case 'invalidMove':
 				winnerClass = TURN === 'X' ? 'o-wins' : 'x-wins';
 				outcomeText =  '<span class="danger">Invalid Move</span> by ' + PLAYERS[TURN === 'X' ? 0 : 1] + "<br><br>" + PLAYERS[TURN === 'X' ? 1 : 0] + " Wins";
+				overlayDelay = 0;
 				SCORES[TURN === 'X' ? 1 : 0]++;
 				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 				break;
@@ -185,11 +188,12 @@ $(function(){
 			case 'tie':
 				winnerClass = '';
 				outcomeText = "It's a Tie";
+				overlayDelay = 400;
 				break;
 		}
 
 		$('.game-overlay h3').html(outcomeText).show();
-		$('.game-overlay').addClass(winnerClass).fadeIn(1000);
+		$('.game-overlay').addClass(winnerClass).delay(overlayDelay).fadeIn(1000);
 		$('#play-again').show();
 		$('#start-game').hide();
 		$('table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
@@ -199,7 +203,7 @@ $(function(){
 	function putMove(move) {
 		if(valid(move)) {
 			BOARD[move[0]][move[1]] = TURN;
-			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN);
+			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass((isBot() ? 'animate ' : '') + TURN.toLowerCase()).text(TURN);
 
 			var winningMoves = tileWins();
 			if(checkFull() || winningMoves.length) {
