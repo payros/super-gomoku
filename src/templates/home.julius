@@ -103,15 +103,16 @@ $(function(){
 		//Stop timer if it's already running
 		stopTimer();
 
+		//If the timer is set to run
 		if(SETTINGS.TIMEOUT !== 0) {
-			TIMER = setInterval(decrementTimer, 1000);
-			
-			if(isBot()) {
-				botMove();
-				$('table').addClass('disabled');
-			} else {
-				$('table').removeClass('disabled');
-			}	
+			TIMER = setInterval(decrementTimer, 1000);	
+		}
+
+		if(isBot()) {
+			botMove();
+			$('table').addClass('disabled');
+		} else {
+			$('table').removeClass('disabled');
 		}
 	}
 
@@ -198,7 +199,7 @@ $(function(){
 	function putMove(move) {
 		if(valid(move)) {
 			BOARD[move[0]][move[1]] = TURN;
-			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase(), 1000).text(TURN);
+			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass(TURN.toLowerCase()).text(TURN);
 
 			var winningMoves = tileWins();
 			if(checkFull() || winningMoves.length) {
@@ -276,7 +277,7 @@ $(function(){
             var moveDelay = checkEmpty() ? 1300 : 300;
           
             //Make sure the timer is still valid and the board hasn't been reset
-			if (TIME > 0 && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
+			if ((SETTINGS.TIMEOUT === 0 || TIME > 0) && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
 		});
 	}
 
