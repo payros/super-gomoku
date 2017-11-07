@@ -1,5 +1,8 @@
-# Super Gomoku
+# [Super Gomoku](https://super-gomoku.herokuapp.com/)
 ## Web-based UI for Gomoku, implemented in Haskell.
+
+### Demo
+## You can play the current version of Super Gomoku [here](https://super-gomoku.herokuapp.com/)
 
 ### Main Goals
 When Completed, this project will let users:
@@ -19,8 +22,8 @@ Time and knowledge permitting, this project will:
 *  Persist Bot Stats (Wins, Ties, Losses)
 *  Include Remote Human X Human
 
-### Installation
-Because this project is currently in early development, it's not deployed on a public server. If you would like to try it out, you can deploy it locally by following these steps:
+### Local Installation
+If you would like to deploy this project on your local machine (and maybe come up with your own bot strategy), you can following these steps:
 
 * Clone/Download the project
 * Run `stack install` in the project's root directory
