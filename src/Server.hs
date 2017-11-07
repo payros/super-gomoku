@@ -4,10 +4,10 @@
 {-# LANGUAGE TypeFamilies          #-}
 
 import Yesod
+import System.Environment
 import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
 import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug, rawJS)
 import Data.Text (unpack)
--- import Debug.Trace
 
 import Players
 import Types
@@ -81,6 +81,12 @@ readBoardHelper (x:xs) row col
     | col == (dimM dim) = ((row, col), readTile [x]):(readBoardHelper xs (row + 1)     1    )
     | otherwise         = ((row, col), readTile [x]):(readBoardHelper xs    row    (col + 1))
 
+normalizePort :: [String] -> Int
+normalizePort [] = 4000
+normalizePort (port:xs)  = read port :: Int
 
 main :: IO ()
-main = warp 4000 GomokuServer
+main = do
+    args <- getArgs
+    putStrLn $ show $ normalizePort args
+    warp (normalizePort args) GomokuServer

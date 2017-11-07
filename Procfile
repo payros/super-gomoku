@@ -1,1 +1,1 @@
-web: gomoku
+web: gomoku $PORT
