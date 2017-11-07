@@ -2,7 +2,7 @@
 ## Web-based UI for Gomoku, implemented in Haskell.
 
 ### Demo
-## You can play the current version of Super Gomoku [here](https://super-gomoku.herokuapp.com/)
+You can play the current version of Super Gomoku [here](https://super-gomoku.herokuapp.com/)
 
 ### Main Goals
 When Completed, this project will let users:
