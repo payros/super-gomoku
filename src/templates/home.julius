@@ -99,7 +99,8 @@ $(function(){
 		return BOTS.indexOf(playerName) > -1;
 	}
 
-	function startTimer() {
+	//Initiates the turn actions (bot move, timer)
+	function startTurn() {
 		//Stop timer if it's already running
 		stopTimer();
 
@@ -137,7 +138,7 @@ $(function(){
 		$('table').removeClass().addClass(TURN.toLowerCase() + '-turn');
 		$('.game-overlay').fadeOut(1000).removeClass('x-wins o-wins');
 
-		startTimer();
+		startTurn();
 	}
 
 	//Resets the game without declaring an outcome
@@ -212,7 +213,7 @@ $(function(){
 				$('table').toggleClass('o-turn x-turn');
 				TURN = TURN === 'X' ? 'O' : 'X';
 				//If the game is not in a reset state, keep going
-			 	startTimer();
+			 	startTurn();
 			}
 		} else {
 			endGame('invalidMove');

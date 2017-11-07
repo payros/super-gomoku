@@ -1,7 +1,6 @@
 <header>
     <h1>Super <span>Gomoku</span>
     <h2 class="scoreboard">
-        
         <input type="text" class="x typeahead" value="Player1">
         <i class="fa fa-desktop x">
         <span class="score"> 0 x 0 </span>
@@ -17,6 +16,7 @@
     <h4>Player Timeout
     <span><input id="in_timeout" type="number" min="0" max="30">
     <button id="save-settings">Reset Board
+
 <section>
     <table class="ended">
         <div class="game-overlay">
@@ -30,6 +30,7 @@
                     $forall col <- boardCols
                         <td>
     <h2 id="timer">30
+
 <aside class="bots">
     <h2>Bots <i class="fa fa-desktop"></i>
     <ul>
