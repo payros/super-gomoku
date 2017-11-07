@@ -83,4 +83,4 @@ readBoardHelper (x:xs) row col
 
 
 main :: IO ()
-main = warp $PORT GomokuServer
+main = warp 4000 GomokuServer
