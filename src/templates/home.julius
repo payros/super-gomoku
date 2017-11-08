@@ -244,7 +244,7 @@ $(function(){
 
 	//Resize the tiles to keep the board pixel size the same
 	function resizeTiles() {
-		totalW = $('section').width();
+		totalW = $('main').width();
 		tileSize = totalW/Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1]);
 
 		$('td').css({'width':tileSize, 'height':tileSize, fontSize:tileSize*0.8});
@@ -409,11 +409,33 @@ $(function(){
 		resizeBoard();
 	}
 
+	//Sets the second player to a Random
+	function setRandomBot() {
+		var playerClass = 'input.o';
+  		var botIdx = Math.floor(Math.random() * BOTS.length); 
+		$(playerClass).val(BOTS[botIdx]);
+		updateName({'target':playerClass});
+	}
+
+	//Sets the second player to a Local Human
+	function setLocal() {
+		$('input.o').val('Player2');
+		updateName({'target':'input.o'});
+	}
+
+
+	//Sets the second player to a Remote Human
+	function setRemote() {
+		$('input.o').val('Remote');
+		updateName({'target':'input.o'});
+	}
 
 	////**** EVENT HANDLERS ****////
 
 	$('table td').click(humanMove);
 	$('#save-settings').click(saveSettings);
+	$('#random-bot').click(setRandomBot);
+	$('#local-game').click(setLocal);
 	$('#start-game').click(function(){ startGame(false); });
 	$('#play-again').click(function(){ startGame(true); });
 	$('input.x, input.o').click(selectAll).keypress(blurInput).focusout(updateName).droppable({classes: { "ui-droppable-active": "droppable" }, drop:botDropped, over:botOver, out:botOut });
@@ -421,10 +443,11 @@ $(function(){
 	$(window).resize(resizeTiles);
 
 	
-	////**** RUN PAGE SCRIPTS ****////
+	////**** RUNTIME SCRIPTS ****////
 	if(localStorage.settings) syncSettings();
 	refreshValues();
 	resizeBoard();
+	setRandomBot();
 
 
 	$('.typeahead').typeahead({
