@@ -15,8 +15,9 @@ import Types
 data GomokuServer = GomokuServer
 
 mkYesod "GomokuServer" [parseRoutes|
-/         HomeR     GET
-/nextMove NextMoveR POST
+/             HomeR         GET
+/nextMove     NextMoveR     POST
+/syncSettings SyncSettingsR POST
 |]
 
 instance Yesod GomokuServer
@@ -58,6 +59,14 @@ postNextMoveR = do
     case maybeStrategy of
         Nothing -> error "No bot with provided name."
         Just strategy -> liftIO $ moveToZeroIndexedStr $ playerMove strategy turn board
+
+-- This function just echos back the settings, but you can use it as a starting point if you want
+postSyncSettingsR :: Handler String
+postSyncSettingsR = do
+    maybeSettings <- lookupPostParam "settings"
+    case maybeSettings of
+        Nothing -> return "Nothing to Update"
+        Just settings -> return $ unpack settings
 
 -- Subtracts one from row and col of move so it is 0-indexed, and converts to an IO String
 moveToZeroIndexedStr :: (IO Move) -> (IO String)

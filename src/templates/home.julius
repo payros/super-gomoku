@@ -198,7 +198,6 @@ $(function(){
 		$('#play-again').show();
 		$('#start-game').hide();
 		$('table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
-
 	}
 
 	function putMove(move) {
@@ -275,7 +274,7 @@ $(function(){
 
 	////**** AJAX REQUESTS ****////
 
-	//Get a moved from a Bot
+	//Get a move from a Bot
 	function botMove(){
 		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':String(BOARD), 'turn':TURN }, function(rawMove){
             var move = eval(rawMove.replace("(","[").replace(")","]"));
@@ -288,7 +287,7 @@ $(function(){
 
 	//Update back-end settings using localStorage
 	function syncSettings(){
-		$.post('/syncSettings');
+		$.post('/syncSettings', {'settings':JSON.stringify(SETTINGS)});
 	}
 
 
@@ -423,9 +422,10 @@ $(function(){
 
 	
 	////**** RUN PAGE SCRIPTS ****////
-	//We may not have to run this for the first time if we get localStorage on the back-end and preload the right values directly from there when we load the page
+	if(localStorage.settings) syncSettings();
 	refreshValues();
 	resizeBoard();
+
 
 	$('.typeahead').typeahead({
 		minLength: 2,
@@ -435,7 +435,5 @@ $(function(){
 			$(this.$element).blur();
 		}
 	});
-
-	//Update Settings Values for the first time (this won't be necessary after Configs come from the back-end)
 	
 });
