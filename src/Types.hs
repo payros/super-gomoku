@@ -20,10 +20,10 @@ type Move   = (Int,Int)
 
 type Board  = [(Move, Tile)] 
 
-data Dimentions = Dim {dimN :: Int, dimM :: Int, dimK :: Int}
+data Dimensions = Dim {dimN :: Int, dimM :: Int, dimK :: Int}
 
 
-dim :: Dimentions
+dim :: Dimensions
 dim = Dim 10 10 5 
 
 
