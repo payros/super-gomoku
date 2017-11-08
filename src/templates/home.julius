@@ -15,10 +15,7 @@ $(function(){
 	var TURN = 'X';
 	var WHO_STARTS_NEXT = 'O';
 	var SCORES = [0,0];
-	var PLAYERS = ['Player1', 'KunkelOwen'];
-	$('input.x').val(PLAYERS[0]);
-	$('input.o').val(PLAYERS[1]);
-	$($('.fa.o')).css("display","inline");
+	var PLAYERS = ['Player1', 'Player2'];
 	var BOTS = #{rawJS $ show $ playersList};
 	SETTINGS = localStorage.settings ? JSON.parse(localStorage.settings) : SETTINGS;
 
@@ -278,7 +275,7 @@ $(function(){
 
 	////**** AJAX REQUESTS ****////
 
-	//Get a move from a Bot
+	//Get a moved from a Bot
 	function botMove(){
 		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':String(BOARD), 'turn':TURN }, function(rawMove){
             var move = eval(rawMove.replace("(","[").replace(")","]"));
@@ -346,7 +343,7 @@ $(function(){
 			PLAYERS[playerIdx] = newName;
 			if(isBot(newName)) {
 				$(el.target).addClass('bot');
-				$(iconClass).fadeIn().css("display","inline");
+				$(iconClass).fadeIn().css("display","inline");;
 			} else {
 				$(el.target).removeClass('bot');
 				$(iconClass).fadeOut();
