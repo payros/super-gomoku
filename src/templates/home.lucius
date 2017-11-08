@@ -58,6 +58,12 @@ body {
 	width:100%;
 }
 
+body.dragging {
+	cursor: grabbing !important;
+   	cursor: -moz-grabbing !important;
+   	cursor: -webkit-grabbing !important;
+}
+
 header {
 	width:100%;
 }
@@ -93,7 +99,10 @@ aside {
 			transform: scale(1,1);
 			transform-origin: right center 0;
     		transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-    		cursor:pointer;
+		    cursor: move; /* fallback if grab cursor is unsupported */
+		    cursor: grab;
+		    cursor: -moz-grab;
+		    cursor: -webkit-grab;
 		}
 
 		li.highlight {
@@ -109,6 +118,9 @@ aside {
 			box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 			z-index:100;
 			width:100%;
+			cursor: grabbing;
+    		cursor: -moz-grabbing;
+    		cursor: -webkit-grabbing;
 		}
 
 		li:hover {
@@ -204,6 +216,14 @@ aside.settings {
 aside.bots {
 	text-align: right;
 	margin-right:1%;
+
+	h3 {
+		font-size: 22px;
+	    font-weight: 100;
+	    text-align: center;
+	    margin: 30px 0 0;
+	    color: #aaa;
+	}
 }
 
 section {

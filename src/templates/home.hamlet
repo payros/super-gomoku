@@ -36,3 +36,4 @@
     <ul>
         $forall player <- players
             <li>#{fst player}
+    <h3><i class="fa fa-hand-grab-o"></i> Drag to Assign

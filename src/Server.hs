@@ -88,5 +88,4 @@ normalizePort (port:xs)  = read port :: Int
 main :: IO ()
 main = do
     args <- getArgs
-    putStrLn $ show $ normalizePort args
     warp (normalizePort args) GomokuServer
