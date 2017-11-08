@@ -6,23 +6,29 @@
         <span class="score"> 0 x 0 </span>
         <i class="fa fa-desktop o">
         <input type="text" class="o typeahead" value="Player2">
-        
-<aside class="settings">
-    <h2><i class="fa fa-cog"></i> Settings
-    <h4>Board Dimensions
-    <span><input id="in_row" type="number" value="#{dimM dim}" min="3" max="20"> x <input id="in_col" type="number" value="#{dimN dim}" min="3" max="20">
-    <h4>Tiles to Win
-    <span><input id="in_tiles_to_win" type="number" value="#{dimK dim}" min="3" max="20">
-    <h4>Player Timeout
-    <span><input id="in_timeout" type="number" min="0" max="30">
-    <button id="save-settings">Reset Board
 
-<section>
+<aside class="left">        
+    <section class="settings">
+        <h2><i class="fa fa-cog"></i> Settings
+        <h4>Board Dimensions
+        <span><input id="in_row" type="number" value="#{dimM dim}" min="3" max="20"> x <input id="in_col" type="number" value="#{dimN dim}" min="3" max="20">
+        <h4>Tiles to Win
+        <span><input id="in_tiles_to_win" type="number" value="#{dimK dim}" min="3" max="20">
+        <h4>Player Timeout
+        <span><input id="in_timeout" type="number" min="0" max="30">
+        <button id="save-settings">Reset Board
+
+    <section class="buttons"> 
+        <button id="random-bot">Random Bot</button>
+        <button id="local-game">Local 2-Player</button>
+        <button id="remote-game" disabled>Remote 2-Player</button>
+
+<main>
     <table class="ended">
         <div class="game-overlay">
             <div class="overlay-content">
                 <h3>Player1 Wins
-                <button id="play-again">Play Again
+                <button id="play-again">Play Again <i class="fa fa-repeat"></i>
                 <button id="start-game">Start Game
         <tbody>
             $forall row <- boardRows
@@ -31,9 +37,11 @@
                         <td>
     <h2 id="timer">30
 
-<aside class="bots">
-    <h2>Bots <i class="fa fa-desktop"></i>
-    <ul>
-        $forall player <- players
-            <li>#{fst player}
-    <h3><i class="fa fa-hand-grab-o"></i> Drag to Assign
+<aside class="right">
+    <section class="bots">
+        <h2>Bots <i class="fa fa-desktop"></i>
+        <ul>
+            $forall player <- players
+                <li>#{fst player}
+        <h3><i class="fa fa-hand-grab-o"></i> Drag to Select
+
