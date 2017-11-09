@@ -280,8 +280,8 @@ $(function(){
             var move = eval(rawMove.replace("(","[").replace(")","]"));
             var moveDelay = checkEmpty() ? 1300 : 300;
           
-            //Make sure the timer is still valid and the board hasn't been reset
-			if ((SETTINGS.TIMEOUT === 0 || TIME > 0) && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
+            //Make sure the game hasn't ended and the board hasn't been reset
+			if (!$('table').hasClass('ended') && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
 		});
 	}
 
