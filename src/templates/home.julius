@@ -1,8 +1,8 @@
 //Set default settings
 var SETTINGS = {
-	"BOARD_DIMENSIONS":[10, 10],
-	"TILES_TO_WIN":5,
-	"TIMEOUT":30 //In seconds - TO DO, pull this from the backend once it's stored there	
+	"BOARD_DIMENSIONS":[#{rawJS $ show (boardSize !! 0)}, #{rawJS $ show (boardSize !! 1)}],
+	"TILES_TO_WIN":#{rawJS $ show tilesToWin},
+	"TIMEOUT":#{rawJS $ show timeout} //In seconds	
 };
 
 //When page ready

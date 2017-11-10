@@ -26,9 +26,12 @@ mkYesod "GomokuServer" [parseRoutes|
 
 instance Yesod GomokuServer
 
--- Variables accessed by front-end
-boardRows = [1..10]
-boardCols = [1..10]
+-- Default variables accessed by front-end
+boardSize = [10,10] :: [Int]
+boardRows = [1 .. boardSize !! 0]
+boardCols = [1 .. boardSize !! 1]
+tilesToWin = 5 :: Int
+timeout = 30 :: Int
 playersList = [fst x | x <- players]
 
 mimeType :: ContentType
