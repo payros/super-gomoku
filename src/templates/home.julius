@@ -290,11 +290,6 @@ $(function(){
 		});
 	}
 
-	//Update back-end settings using localStorage
-	function syncSettings(){
-		$.post('/syncSettings', {'settings':JSON.stringify(SETTINGS)});
-	}
-
 
 	////**** HANDLER FUNCTIONS ****////
 
@@ -408,9 +403,6 @@ $(function(){
 		//Save to browser storage	
 		localStorage.settings = JSON.stringify(SETTINGS);
 
-		//Update settings on the backend
-		// syncSettings();
-
 		resizeBoard();
 	}
 
@@ -449,7 +441,6 @@ $(function(){
 
 	
 	////**** RUNTIME SCRIPTS ****////
-	// if(localStorage.settings) syncSettings();
 	refreshValues();
 	resizeBoard();
 	setRandomBot();
