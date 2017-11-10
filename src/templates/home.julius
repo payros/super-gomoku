@@ -335,7 +335,8 @@ $(function(){
 	function updateName(el){
 		var newName = $(el.target).val();
 		var playerIdx = $(el.target).hasClass('x') ? 0 : 1;
-		var iconClass = $(this).hasClass('x') ? '.fa.x' : '.fa.o';
+		var iconClass = $(el.target).hasClass('x') ? '.fa.x' : '.fa.o';
+		console.log(iconClass);
 
 		//If the name is valid, update
 		if(newName && newName.length) {
@@ -419,13 +420,25 @@ $(function(){
 
 	//Sets the second player to a Local Human
 	function setLocal() {
-		$('input.o').val('Player2');
-		updateName({'target':'input.o'});
+		if($('input.x').hasClass('bot')) {
+			$('input.x').val('Player1');
+			updateName({'target':'input.x'});			
+		}
+
+		if($('input.o').hasClass('bot')) {
+			$('input.o').val('Player2');
+			updateName({'target':'input.o'});			
+		}
 	}
 
 
 	//Sets the second player to a Remote Human
 	function setRemote() {
+		if($('input.x').hasClass('bot')) {
+			$('input.x').val('Player1');
+			updateName({'target':'input.x'});			
+		}
+
 		$('input.o').val('Remote');
 		updateName({'target':'input.o'});
 	}
