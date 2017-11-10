@@ -11,9 +11,9 @@
     <section class="settings">
         <h2><i class="fa fa-cog"></i> Settings
         <h4>Board Dimensions
-        <span><input id="in_row" type="number" value="#{dimM dim}" min="3" max="20"> x <input id="in_col" type="number" value="#{dimN dim}" min="3" max="20">
+        <span><input id="in_row" type="number" value="10" min="3" max="20"> x <input id="in_col" type="number" value="10" min="3" max="20">
         <h4>Tiles to Win
-        <span><input id="in_tiles_to_win" type="number" value="#{dimK dim}" min="3" max="20">
+        <span><input id="in_tiles_to_win" type="number" value="5" min="3" max="20">
         <h4>Player Timeout
         <span><input id="in_timeout" type="number" min="0" max="30">
         <button id="save-settings">Reset Board

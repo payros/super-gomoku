@@ -13,8 +13,8 @@ teamMembers = "Andrew Putlock and Brian Oluwo"
 playerHeadlessChicken :: Player
 playerHeadlessChicken = Player strategy teamMembers
 
-strategy :: Tile -> Board -> IO (Int, Int)
-strategy t b = do
+strategy :: Tile -> Board -> Dimensions -> Int -> IO (Int, Int)
+strategy t b dim time = do
   x <- randomRIO (0, length safeMoves - 1)
   y <- randomRIO (0, (length $ closestMove b $ safeMoves !! x) - 1)
   return $ (closestMove b $ safeMoves !! x) !! y

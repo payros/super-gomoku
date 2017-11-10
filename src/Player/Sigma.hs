@@ -13,7 +13,7 @@ playerSigma :: Player
 playerSigma = Player strategy "Sigma"
 
 
-strategy :: Tile -> Board -> IO (Int, Int)
-strategy t b = do
+strategy :: Tile -> Board -> Dimensions -> Int -> IO (Int, Int)
+strategy t b dim time = do
   x <- randomRIO (0, length (validMoves b) - 1)
   return $ (validMoves b) !! x

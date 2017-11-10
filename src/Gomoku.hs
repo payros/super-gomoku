@@ -18,7 +18,7 @@ main = do
     (player1,player2) <-  getArgs >>= getPlayers
     putStrLn "This is the Gomoku game."
     -- rounds  <- prompt "How many rounds should we play?"
-    score   <- playRounds 5 player1  player2
+    score   <- playRounds 5 player1  player2 (Dim 10 10 5)
     putStrLn $ showFinalScore score
 
 
@@ -36,20 +36,20 @@ lookupPlayer name =
   where
     err = putStrLn ("Player " ++ show name ++ "does not exists.") >> exitFailure
 
-playRounds :: Int -> Player -> Player -> IO Score
-playRounds rounds player1 player2 =
-  foldM (playRound pi1 pi2) [(pi1,0),(pi2,0)] [1..rounds]
+playRounds :: Int -> Player -> Player -> Dimensions -> IO Score
+playRounds rounds player1 player2 dim =
+  foldM (playRound pi1 pi2 dim) [(pi1,0),(pi2,0)] [1..rounds]
   where
     pi1 = PI player1 X 1
     pi2 = PI player2 O 2
 
-playRound :: PlayerInfo -> PlayerInfo -> Score -> Int -> IO Score
-playRound p1 p2 score i = do
+playRound :: PlayerInfo -> PlayerInfo -> Dimensions -> Score -> Int -> IO Score
+playRound p1 p2 dim score i = do
    putStrLn ("Score:: " ++ showScore score)
    putStrLn ("Round " ++ show i ++ "!")
    putStrLn ((if (i `mod` 2 == 0) then show p2 else show p1)  ++ " plays first")
    if i /= 1 then putStrLn ("Ready for round " ++ show i ++ "? [Y/N]") >> getLine >> return () else return ()
-   result <- if (i `mod` 2 == 0) then play p2 p1 emptyBoard else play p1 p2 emptyBoard
+   result <- if (i `mod` 2 == 0) then play p2 p1 emptyBoard dim else play p1 p2 emptyBoard dim
    case result of
       TimeOut p p' -> putStrLn (show p ++ " timed out after 30sec!\n\n") >> return (incr p' score)
       Invalid p p' -> putStrLn (show p ++ " made an invalid move!\n\n")  >> return (incr p' score)
@@ -57,20 +57,20 @@ playRound p1 p2 score i = do
       Tie          -> putStrLn "Its a tie!\n\n" >> return score
 
 
-play :: PlayerInfo -> PlayerInfo -> Board -> IO Result
-play pi1@(PI p1 t1 _) pi2 board = do
+play :: PlayerInfo -> PlayerInfo -> Board -> Dimensions -> IO Result
+play pi1@(PI p1 t1 _) pi2 board dim = do
   timedMove <- timeout (30::Second) $ (playerMove p1) t1 board
   case timedMove of
     Nothing   -> return $ TimeOut pi1 pi2
     Just move ->
       case putMaybe board t1 move of
         Nothing -> putStrLn ("Invalid move. " ++ show move) >> return (Invalid pi1 pi2)
-        Just b  -> if tileWins b t1
-                      then putStrLn (showWinningBoard b t1) >> return (Wins pi1)
-                      else do putStrLn $ showBoardNew move b
+        Just b  -> if tileWins b dim t1
+                      then putStrLn (showWinningBoard b dim t1) >> return (Wins pi1)
+                      else do putStrLn $ showBoardNew move b dim
                               -- threadDelay 100000
-                              if checkFull b
+                              if checkFull b dim
                                  then return Tie
-                                 else play pi2 pi1 b
+                                 else play pi2 pi1 b dim
 
 

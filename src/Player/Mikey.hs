@@ -15,10 +15,10 @@ playerMikey = Player getMoveNearTheAction "Mikey"
 
 
 -- Gets the average of all non empty tiles, and makes a move closest to those.
-getMoveNearTheAction :: Tile -> Board -> IO Move
-getMoveNearTheAction tile board
-  | board == emptyBoard = getRandomMove tile emptyBoard
-  | otherwise           = return $ closestMove board $ aveNonEmptyMove $ nonEmptyMoves tile board
+getMoveNearTheAction :: Tile -> Board -> Dimensions -> Int -> IO Move
+getMoveNearTheAction tile board dim time
+  | board == (emptyBoard dim) = getRandomMove tile (emptyBoard dim) dim
+  | otherwise                 = return $ closestMove board $ aveNonEmptyMove (nonEmptyMoves tile board) dim
 
 
 -- Takes a board and a move, and gets the closest move on the board that is empty.
@@ -35,9 +35,9 @@ closestMove board (aveI, aveJ)
 
 
 -- Takes average i and j of list of moves
-aveNonEmptyMove :: [Move] -> Move
-aveNonEmptyMove []    = (dimN dim `div` 2, dimM dim `div` 2)
-aveNonEmptyMove moves = sumTuple `moveDiv` numMoves
+aveNonEmptyMove :: [Move] -> Dimensions -> Move
+aveNonEmptyMove [] dim    = (dimN dim `div` 2, dimM dim `div` 2)
+aveNonEmptyMove moves dim = sumTuple `moveDiv` numMoves
   where 
     sumTuple = foldr (\(i1,j1) (i2,j2) -> (i1+i2,j1+j2)) (0,0) moves
     numMoves = length moves
@@ -52,10 +52,10 @@ nonEmptyMoves tile board = [ij | (ij, t) <- board, t /= EmptyTile]
 
 
 -- Copied from Computer.hs, gets a random valid move
-getRandomMove :: Tile -> Board -> IO (Int, Int)
-getRandomMove t b = do
+getRandomMove :: Tile -> Board -> Dimensions -> IO (Int, Int)
+getRandomMove t b dim = do
     col <- randomRIO (1,dimM dim)
     row <- randomRIO (1,dimN dim)
     case b??(row, col) of
         EmptyTile -> return (row, col)
-        _         -> getRandomMove t b
+        _         -> getRandomMove t b dim
