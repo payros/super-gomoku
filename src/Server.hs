@@ -21,7 +21,6 @@ data GomokuServer = GomokuServer
 mkYesod "GomokuServer" [parseRoutes|
 /             HomeR         GET
 /nextMove     NextMoveR     POST
-/syncSettings SyncSettingsR POST
 |]
 
 instance Yesod GomokuServer
@@ -80,13 +79,6 @@ postNextMoveR = do
         Just strategy -> case maybeParsedSettings of
             Nothing       -> error "Could not parse settings"
             Just settings -> liftIO $ moveToZeroIndexedStr (playerMove strategy turn board (cDims settings) (cTimeout settings))
-
-
--- This function just echos back the settings, but you can use it as a starting point if you want
-postSyncSettingsR :: Handler String
-postSyncSettingsR = do
-    maybeSettings <- lookupPostParam "settings"
-    return "TODO"
 
 
 -- If a variable is optional, we can use .:? instead of .:
