@@ -9,16 +9,16 @@ teamMembers = "Rex L. and Alex Z."
 playerRooster :: Player
 playerRooster = Player getBetterRandomMove "Rooster"
 
-getRandomMove :: Tile -> Board -> IO (Int, Int)
-getRandomMove t b = do
+getRandomMove :: Tile -> Board -> Dimensions -> Int -> IO (Int, Int)
+getRandomMove t b dim time = do
     col <- randomRIO (1,dimM dim)
     row <- randomRIO (1,dimN dim)
     case b??(row, col) of
         EmptyTile -> return (row, col)
-        _         -> getRandomMove t b
+        _         -> getRandomMove t b dim time
 
-getBetterRandomMove :: Tile -> Board -> IO (Int, Int)
-getBetterRandomMove t b 
+getBetterRandomMove :: Tile -> Board -> Dimensions -> Int -> IO (Int, Int)
+getBetterRandomMove t b dim time
     | movesSoFar `mod` 6 == 1 || movesSoFar `mod` 6 == 0 = return (head $ validMoves b)
     | otherwise = do
         idx <- randomRIO (0, (length positions) - 1)

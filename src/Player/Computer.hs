@@ -8,8 +8,8 @@ playerComputer :: Player
 playerComputer = Player getRandomMove "Computer" 
 
 
-getRandomMove :: Tile -> Board -> IO (Int, Int)
-getRandomMove t b = do
+getRandomMove :: Tile -> Board -> Dimensions -> Int -> IO (Int, Int)
+getRandomMove t b dim time = do
     col <- randomRIO (1,dimM dim)
     row <- randomRIO (1,dimN dim)
     case b??(row, col) of

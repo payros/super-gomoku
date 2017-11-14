@@ -1,8 +1,8 @@
 //Set default settings
 var SETTINGS = {
-	"BOARD_DIMENSIONS":[#{rawJS $ show $ dimM dim}, #{rawJS $ show $ dimN dim}],
-	"TILES_TO_WIN":#{rawJS $ show $ dimK dim},
-	"TIMEOUT":30 //In seconds - TO DO, pull this from the backend once it's stored there	
+	"BOARD_DIMENSIONS":[#{rawJS $ show (boardSize !! 0)}, #{rawJS $ show (boardSize !! 1)}],
+	"TILES_TO_WIN":#{rawJS $ show tilesToWin},
+	"TIMEOUT":#{rawJS $ show timeout} //In seconds	
 };
 
 //When page ready
@@ -36,7 +36,7 @@ $(function(){
 	function tileWins() {
 		//For every tile on the board, check if it forms a winning line
 		for (row=0; row<SETTINGS.BOARD_DIMENSIONS[0]; row++) {
-			for (col=0; col<SETTINGS.BOARD_DIMENSIONS[0]; col++) {
+			for (col=0; col<SETTINGS.BOARD_DIMENSIONS[1]; col++) {
 				var startTile = BOARD[row][col];
 
 				if(startTile !== ' ') {
@@ -276,18 +276,18 @@ $(function(){
 
 	//Get a move from a Bot
 	function botMove(){
-		$.post('/nextMove', { 'player':PLAYERS[TURN === 'X' ? 0 : 1], 'board':String(BOARD), 'turn':TURN }, function(rawMove){
+		$.post('/nextMove',
+			{
+				'player':PLAYERS[TURN === 'X' ? 0 : 1],
+				'board':String(BOARD),
+				'turn':TURN,
+				'settings':JSON.stringify(SETTINGS)
+			}, function(rawMove){
             var move = eval(rawMove.replace("(","[").replace(")","]"));
             var moveDelay = checkEmpty() ? 1300 : 300;
-          
             //Make sure the game hasn't ended and the board hasn't been reset
 			if (!$('table').hasClass('ended') && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
 		});
-	}
-
-	//Update back-end settings using localStorage
-	function syncSettings(){
-		$.post('/syncSettings', {'settings':JSON.stringify(SETTINGS)});
 	}
 
 
@@ -404,9 +404,6 @@ $(function(){
 		//Save to browser storage	
 		localStorage.settings = JSON.stringify(SETTINGS);
 
-		//Update settings on the backend
-		syncSettings();
-
 		resizeBoard();
 	}
 
@@ -457,7 +454,6 @@ $(function(){
 
 	
 	////**** RUNTIME SCRIPTS ****////
-	if(localStorage.settings) syncSettings();
 	refreshValues();
 	resizeBoard();
 	setRandomBot();

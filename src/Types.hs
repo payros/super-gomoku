@@ -1,12 +1,32 @@
-module Types where 
+module Types where
 
 import qualified Data.List 
-import qualified Data.Maybe as M 
+import qualified Data.Maybe as M
+
+
+-------------------------------------------------------------------------------
+--- Configs--------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+data Config = Config
+    { cDims :: Dimensions
+    , cTimeout :: Int
+    } deriving (Show)
+
+data IntermediateConfig = IntermediateConfig
+    { icBoardDimensions :: [Int]
+    , icTilesToWin :: Int
+    , icTimeout :: Int
+    } deriving (Show)
+
+toConfig :: (Maybe IntermediateConfig) -> (Maybe Config)
+toConfig intermediate = case intermediate of
+    Nothing -> Nothing
+    Just im -> Just (Config (Dim ((icBoardDimensions im)!!0) ((icBoardDimensions im)!!1) (icTilesToWin im)) (icTimeout im))
 
 -------------------------------------------------------------------------------
 --- Board ---------------------------------------------------------------------
 -------------------------------------------------------------------------------
-
 
 data Tile = EmptyTile | X | O 
   deriving (Eq)
@@ -20,18 +40,18 @@ type Move   = (Int,Int)
 
 type Board  = [(Move, Tile)] 
 
-data Dimentions = Dim {dimN :: Int, dimM :: Int, dimK :: Int}
+data Dimensions = Dim {dimN :: Int, dimM :: Int, dimK :: Int} deriving (Show)
 
 
-dim :: Dimentions
-dim = Dim 10 10 5 
+tempDim :: Dimensions
+tempDim = Dim 10 10 5
 
 
 (??) :: Board -> Move -> Tile
 b??ij = M.fromMaybe EmptyTile (lookup ij b) 
 
-emptyBoard :: Board
-emptyBoard = [((x,y), EmptyTile) | x <- [1..(dimN dim)], y <- [1..(dimM dim)]]
+emptyBoard :: Dimensions -> Board
+emptyBoard dim = [((x,y), EmptyTile) | x <- [1..(dimN dim)], y <- [1..(dimM dim)]]
 
 validMoves :: Board -> [Move]
 validMoves board  = [ij | (ij, EmptyTile) <- board]
@@ -49,7 +69,7 @@ putMaybe b t xy = case b??xy of
 -------------------------------------------------------------------------------
 
 data Player = 
-  Player { playerMove :: Tile -> Board -> IO Move
+  Player { playerMove :: Tile -> Board -> Dimensions -> Int -> IO Move
          , playerName :: String
          } 
 
@@ -116,13 +136,13 @@ instance Show Tile where
 --  read 'X' = X         
 --  read 'O' = O        
 
-showBoard :: Board -> String
-showBoard b = let blist = boardAsList b
-              in  unlines [Data.List.intercalate "|" row | row <- blist]
-              where
-                boardAsList b = [[show (b??(x,y)) | y <- [1..dimM dim]] | x <- [1..dimN dim]]
+showBoard :: Board -> Dimensions -> String
+showBoard b dim = let blist = boardAsList b
+                  in  unlines [Data.List.intercalate "|" row | row <- blist]
+                  where
+                    boardAsList b = [[show (b??(x,y)) | y <- [1..dimM dim]] | x <- [1..dimN dim]]
 
-showTileNumbers :: String
-showTileNumbers  = (unlines
-                   [Data.List.intercalate "|" ["(" ++ show x ++ "," ++ show y ++ ")" |
-                   y <- [1..dimM dim]] | x <- [1..dimN dim]])
+showTileNumbers :: Dimensions -> String
+showTileNumbers dim = (unlines
+                       [Data.List.intercalate "|" ["(" ++ show x ++ "," ++ show y ++ ")" |
+                       y <- [1..dimM dim]] | x <- [1..dimN dim]])

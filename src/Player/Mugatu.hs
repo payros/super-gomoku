@@ -1,6 +1,6 @@
 module Player.Mugatu (playerMugatu) where
     
-    import Types (Player(..), Tile, Board, Move, validMoves)
+    import Types (Player(..), Tile, Board, Move, Dimensions, validMoves)
     import Checks 
 
     teamMembers :: String 
@@ -9,5 +9,5 @@ module Player.Mugatu (playerMugatu) where
     playerMugatu :: Player 
     playerMugatu = Player crazyPills "Mugatu"
 
-    crazyPills :: Tile -> Board -> IO Move
-    crazyPills tile board = return $ head $ validMoves board
+    crazyPills :: Tile -> Board -> Dimensions -> Int -> IO Move
+    crazyPills tile board dim time = return $ head $ validMoves board

@@ -14,12 +14,12 @@ teamMembers = "Patrick Owen and Will Kunkel"
 playerKunkelOwen :: Player
 playerKunkelOwen = Player computeMove "KunkelOwen"
 
-computeMove :: Tile -> Board -> IO Move
-computeMove tile board = fromTimed (return $! anyValidMove board) $
+computeMove :: Tile -> Board -> Dimensions -> Int -> IO Move
+computeMove tile board dim time = fromTimed (return $! anyValidMove board) $
   (withTimeout 20000000 (return $! minimaxToDepth 2)) <>
   (withTimeout 9500000 (return $! minimaxToDepth 1))
   where
-    minimaxToDepth depth = minimax depth tile (scoredBoardFromBoard board) heuristicFromScoredBoard
+    minimaxToDepth depth = minimax depth tile (scoredBoardFromBoard board dim) dim heuristicFromScoredBoard
 
 data Timed a = Timed
   { getComputation :: IO a
@@ -69,17 +69,17 @@ scoreToValue 1 = Win
 valueToScoredMove :: Value -> ScoredMove
 valueToScoredMove v = ScoredMove undefined v
 
-minimax :: Int -> Tile -> ScoredBoard -> (Tile -> ScoredBoard -> Int) -> Move
-minimax maxDepth tile board heuristic = getMove $ maximizingMove maxDepth board
+minimax :: Int -> Tile -> ScoredBoard -> Dimensions -> (Tile -> ScoredBoard -> Int) -> Move
+minimax maxDepth tile board dim heuristic = getMove $ maximizingMove maxDepth board
   where
     maybeScore board depth =
       justIf (depth <= 0) (Heuristic (heuristic tile board)) <|>
-      scoreToValue <$> scoreBoard tile (fst board)
+      scoreToValue <$> scoreBoard tile (fst board) dim
     maximizingMove depth board = fromMaybe
       (maximum $
        (\move -> ScoredMove move (getValue $
                                   minimizingMove (depth - 1) $
-                                  putScored board tile move)) <$>
+                                  putScored board dim tile move)) <$>
        (filterIfAny (isUsefulMove (fst board)) $
         validMoves (fst board)))
       (valueToScoredMove <$> maybeScore board depth)
@@ -87,15 +87,15 @@ minimax maxDepth tile board heuristic = getMove $ maximizingMove maxDepth board
       (minimum $
        (\move -> ScoredMove move (getValue $
                                   maximizingMove (depth - 1) $
-                                  putScored board (flipTile tile) move)) <$>
+                                  putScored board dim (flipTile tile) move)) <$>
        (filterIfAny (isUsefulMove (fst board)) $
         validMoves (fst board)))
       (valueToScoredMove <$> maybeScore board depth)
 
-heuristicFromBoard :: Tile -> Board -> Int
-heuristicFromBoard tile board = (valueBoard tile board) - (valueBoard (flipTile tile) board)
+heuristicFromBoard :: Tile -> Board -> Dimensions -> Int
+heuristicFromBoard tile board dim = (valueBoard tile board) - (valueBoard (flipTile tile) board)
   where
-    valueBoard tile board = foldl (+) 0 (map (valueLine tile board) allLines)
+    valueBoard tile board = foldl (+) 0 (map (valueLine tile board) (allLines dim))
     valueLine tile board moves = evaluateCount $
       foldl (+) 0 (map (valueMove tile board) moves)
     valueMove tile board move = case (board ?? move) of
@@ -119,14 +119,14 @@ heuristicFromScoredBoard tile (board, score) = case tile of
   O -> -score
   _ -> 0
 
-putScored :: ScoredBoard -> Tile -> Move -> ScoredBoard
-putScored (board, score) tile move = (put board tile move, score + scoreChange board tile move)
+putScored :: ScoredBoard -> Dimensions -> Tile -> Move -> ScoredBoard
+putScored (board, score) dim tile move = (put board tile move, score + scoreChange board dim tile move)
 
 -- Returns the score change in X's perpective if the given tile is placed on the given move
-scoreChange :: Board -> Tile -> Move -> Int
-scoreChange board placedTile move = (valueBoardChange X board) - (valueBoardChange O board)
+scoreChange :: Board -> Dimensions -> Tile -> Move -> Int
+scoreChange board dim placedTile move = (valueBoardChange X board) - (valueBoardChange O board)
   where
-    valueBoardChange scoreTile board = foldl (+) 0 (map (valueLineChange scoreTile board) (restrictedLines move))
+    valueBoardChange scoreTile board = foldl (+) 0 (map (valueLineChange scoreTile board) (restrictedLines move dim))
     valueLineChange scoreTile board moves
       | placedTile == scoreTile = (evaluateCount (count+1)) - (evaluateCount count)
       | otherwise = -(evaluateCount count)
@@ -144,8 +144,8 @@ evaluateCount count
   | count == 1 = 1
   | otherwise = 0
       
-restrictedLines :: Move -> [[Move]]
-restrictedLines (fixedRow, fixedCol) = getRows ++ getColumns ++ getDiagonals1 ++ getDiagonals2
+restrictedLines :: Move -> Dimensions -> [[Move]]
+restrictedLines (fixedRow, fixedCol) dim = getRows ++ getColumns ++ getDiagonals1 ++ getDiagonals2
   where
     getRows = [[(fixedRow, col+k) | k <- [0..k-1]] | col <- [max (fixedCol-k+1) 1 .. min fixedCol (n-k+1)]]
     getColumns = [[(row+k, fixedCol) | k <- [0..k-1]] | row <- [max (fixedRow-k+1) 1 .. min fixedRow (m-k+1)]]
@@ -155,15 +155,15 @@ restrictedLines (fixedRow, fixedCol) = getRows ++ getColumns ++ getDiagonals1 ++
     m = dimM dim
     n = dimN dim
       
-allLines :: [[Move]]
-allLines = getRows ++ getColumns ++ getDiagonals1 ++ getDiagonals2
+allLines :: Dimensions -> [[Move]]
+allLines dim = getRows ++ getColumns ++ getDiagonals1 ++ getDiagonals2
   where
     getRows = [[(row, col+k) | k <- [0..dimK dim - 1]] | row <- [1..dimM dim], col <- [1..dimN dim - dimK dim + 1]]
     getColumns = [[(row+k, col) | k <- [0..dimK dim - 1]] | row <- [1..dimM dim - dimK dim + 1], col <- [1..dimN dim]]
     getDiagonals1 = [[(row+k, col+k) | k <- [0..dimK dim - 1]] | row <- [1..dimM dim - dimK dim + 1], col <- [1..dimN dim - dimK dim + 1]]
     getDiagonals2 = [[(row+k, col-k) | k <- [0..dimK dim - 1]] | row <- [1..dimM dim - dimK dim + 1], col <- [dimK dim..dimN dim]]
 
-scoredBoardFromBoard :: Board -> ScoredBoard
-scoredBoardFromBoard board = (board, heuristicFromBoard X board)
+scoredBoardFromBoard :: Board -> Dimensions -> ScoredBoard
+scoredBoardFromBoard board dim = (board, heuristicFromBoard X board dim)
 
 

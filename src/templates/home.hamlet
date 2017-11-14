@@ -11,11 +11,11 @@
     <section class="settings">
         <h2><i class="fa fa-cog"></i> Settings
         <h4>Board Dimensions
-        <span><input id="in_row" type="number" value="#{dimM dim}" min="3" max="20"> x <input id="in_col" type="number" value="#{dimN dim}" min="3" max="20">
+        <span><input id="in_row" type="number" value="#{boardSize !! 0}" min="3" max="20"> x <input id="in_col" type="number" value="#{boardSize !! 1}" min="3" max="20">
         <h4>Tiles to Win
-        <span><input id="in_tiles_to_win" type="number" value="#{dimK dim}" min="3" max="20">
+        <span><input id="in_tiles_to_win" type="number" value="#{tilesToWin}" min="3" max="20">
         <h4>Player Timeout
-        <span><input id="in_timeout" type="number" min="0" max="30">
+        <span><input id="in_timeout" type="number" value="#{timeout}" min="0" max="30">
         <button id="save-settings">Reset Board
 
     <section class="buttons"> 
@@ -35,7 +35,7 @@
                 <tr>
                     $forall col <- boardCols
                         <td>
-    <h2 id="timer">30
+    <h2 id="timer">#{timeout}
 
 <aside class="right">
     <section class="bots">
