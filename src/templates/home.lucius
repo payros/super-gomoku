@@ -550,7 +550,10 @@ h2.scoreboard {
 table {
     border-collapse: collapse;
     margin: 0 auto;
+	outline: 2px solid #{borderColor};
     box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.5s;
+
 
     tr {
     	overflow: hidden;
@@ -616,6 +619,9 @@ table {
 }
 
 table.x-turn {
+	outline: 2px solid #{xColor};
+	box-shadow: 1px 1px 18px hsla(291, 64%, 70%, 0.4);
+
 	td:not(.o):not(.x):hover {
 		background-color:#{xColor};
 		transform: rotateY(180deg);
@@ -632,7 +638,10 @@ table.x-turn {
 	}
 }
 
-table.o-turn {
+table.o-turn {	
+	outline: 2px solid #{oColor};
+	box-shadow: 1px 1px 18px hsla(174, 100%, 29%, 0.5);
+
 	td:not(.o):not(.x):hover {
 		background-color:#{oColor};
 		transform: rotateY(180deg);
@@ -667,6 +676,14 @@ table.disabled {
 	text-align: center;
     font-size: 40px;
     color: #{activeColor};
+}
+
+#timer.x-turn {
+	color:#{xColor};
+}
+
+#timer.o-turn {
+	color:#{oColor};
 }
 
 #timer.danger {

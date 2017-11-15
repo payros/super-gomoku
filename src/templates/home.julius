@@ -161,7 +161,7 @@ $(function(){
 	function stopTimer() {
 		clearInterval(TIMER);
 		TIME = SETTINGS.TIMEOUT;
-		$('#timer').removeClass().text(TIME < 10 ? '0' + TIME : TIME);
+		$('#timer').removeClass('danger').text(TIME < 10 ? '0' + TIME : TIME);
 	}
 
 	function startGame(replay) {
@@ -175,7 +175,7 @@ $(function(){
 			$('td').removeClass().text(' ');			
 		}
 
-		$('table').removeClass().addClass(TURN.toLowerCase() + '-turn');
+		$('table, #timer').removeClass().addClass(TURN.toLowerCase() + '-turn');
 		$('.game-overlay').fadeOut(1000).removeClass('x-wins o-wins');
 
 		startTurn();
@@ -249,6 +249,7 @@ $(function(){
 		$('#play-again').show();
 		$('#start-game').hide();
 		$('table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
+		$('#timer').removeClass();
 	}
 
 	function putMove(move) {
@@ -260,7 +261,7 @@ $(function(){
 			if(checkFull() || winningMoves.length) {
 				endGame(winningMoves.length ? 'winningMove' : 'tie', winningMoves);
 			} else {
-				$('table').toggleClass('o-turn x-turn');
+				$('table, #timer').toggleClass('o-turn x-turn');
 				TURN = TURN === 'X' ? 'O' : 'X';
 				//If the game is not in a reset state, keep going
 			 	startTurn();
