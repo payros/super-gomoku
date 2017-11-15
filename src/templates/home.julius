@@ -300,6 +300,7 @@ $(function(){
 		tileSize = totalW/Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1]);
 
 		$('td').css({'width':tileSize, 'height':tileSize, fontSize:tileSize*0.8});
+		$('main').delay(200).fadeTo(600, 1);
 	}
 
 	//Refreshes UI values to match SETTINGS
