@@ -16,7 +16,7 @@
         <span><input id="in_tiles_to_win" type="number" value="#{tilesToWin}" min="3" max="20">
         <h4>Player Timeout
         <span><input id="in_timeout" type="number" value="#{timeout}" min="0" max="30">
-        <button id="save-settings">Reset Board
+        <button id="save-settings"><i class="fa fa-chevron-right"></i> Reset Board
 
     <section class="buttons"> 
         <button id="random-bot">Random Bot</button>
