@@ -212,6 +212,18 @@ section.bots {
 			text-shadow: 0 14px 28px rgba(0,0,0,0.14), 0 10px 10px rgba(0,0,0,0.10);
 		}
 
+		li.defeated::before {
+			content:'\f005';
+			// content: '\f25b';
+			// content: '\f091';
+			font-family: FontAwesome;
+			margin-right:5px;
+		}
+
+		li.highlight.defeated::before {
+			display:none;
+		}
+
 		li:nth-child(1n) { color:#{liColor1}; }
 		li:nth-child(2n) { color:#{liColor2}; }
 		li:nth-child(3n) { color:#{liColor3}; }

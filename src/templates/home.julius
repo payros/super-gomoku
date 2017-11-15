@@ -5,12 +5,14 @@ var SETTINGS = {
 	"TIMEOUT":#{rawJS $ show timeout} //In seconds	
 };
 
+var DEFEATED = [];
+
 //When page ready
 $(function(){
 
 	////**** GLOBAL VARIABLES ****////
 
-	var TIME, TIMER;
+	var TIME, TIMER, STARTING_PLAYERS;
 	var BOARD = makeEmptyBoard();
 	var TURN = 'X';
 	var WHO_STARTS_NEXT = 'O';
@@ -18,6 +20,7 @@ $(function(){
 	var PLAYERS = ['Player1', 'Player2'];
 	var BOTS = #{rawJS $ show $ playersList};
 	SETTINGS = localStorage.settings ? JSON.parse(localStorage.settings) : SETTINGS;
+	DEFEATED = localStorage.defeated ? JSON.parse(localStorage.defeated) : DEFEATED;
 
 	////**** UTILITY FUNCTIONS ****////
 
@@ -117,6 +120,41 @@ $(function(){
 		}
 	}
 
+	function saveStats(winner, loser) {
+		var P1 = PLAYERS[0];
+		var P2 = PLAYERS[1];
+		var P1BOT = isBot(P1);
+		var P2BOT = isBot(P2);
+		var WBOT = isBot(winner);
+		var LBOT = isBot(loser);
+
+		//Both players are human, return
+		if(!P1BOT && !P2BOT) return;
+
+		//It's a tie
+		if(winner === '' && loser === '') {
+			if(P1BOT) updateBotStats(P1, 'tied', 'bot');
+			if(P2BOT) updateBotStats(P2, 'tied', 'bot');
+
+		// There is a winner
+		} else {
+			if(WBOT) updateBotStats(winner, 'won', LBOT ? 'bot' : 'human');
+			if(LBOT) updateBotStats(winner, 'lost', WBOT ? 'bot' : 'human');
+
+			if(!WBOT && LBOT) updateHumanStats(loser);
+		}
+	}
+
+	function updateHumanStats(loserBot) {
+		
+		//If this bot is not already on the list
+		if(DEFEATED.indexOf(loserBot) === -1) {
+			DEFEATED.push(loserBot);
+			console.log(DEFEATED);
+			localStorage.defeated = JSON.stringify(DEFEATED);
+			refreshBotList();
+		}
+	}
 
 	////**** UI FUNCTIONS ****////
 
@@ -127,6 +165,8 @@ $(function(){
 	}
 
 	function startGame(replay) {
+		STARTING_PLAYERS = [PLAYERS[0], PLAYERS[1]];
+
 		if(replay) {
 			TURN = WHO_STARTS_NEXT;
 			WHO_STARTS_NEXT = WHO_STARTS_NEXT === 'X' ? 'O' : 'X';
@@ -153,15 +193,17 @@ $(function(){
 
 	//Resets the game declaring an outcome
 	function endGame(reason, winningMoves) {
-		var winnerClass, outcomeText, overlayDelay;
+		var winner, loser, winnerClass, outcomeText, overlayDelay;
 
 		if(TIME > 0 ) stopTimer();
 
 		switch(reason) {
 
 			case 'winningMove':
+				winner = PLAYERS[TURN === 'X' ? 0 : 1];
+				loser = PLAYERS[TURN === 'X' ? 1 : 0];
 				winnerClass = TURN.toLowerCase() + '-wins';
-				outcomeText = PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
+				outcomeText = winner + " Wins";
 				overlayDelay = 1000;
 				SCORES[TURN === 'X' ? 0 : 1]++;
 				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
@@ -171,27 +213,36 @@ $(function(){
 				break;
 
 			case 'timeout':
+				winner = PLAYERS[TURN === 'X' ? 0 : 1];
+				loser = PLAYERS[TURN === 'X' ? 1 : 0];
 				winnerClass = TURN.toLowerCase() + '-wins';
-				outcomeText = PLAYERS[TURN === 'X' ? 1 : 0] + ' <span class="danger">Timed Out!</span><br><br>' + PLAYERS[TURN === 'X' ? 0 : 1] + " Wins";
+				outcomeText = loser + ' <span class="danger">Timed Out!</span><br><br>' + winner + " Wins";
 				overlayDelay = 0;
 				SCORES[TURN === 'X' ? 0 : 1]++;
 				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 				break;
 
 			case 'invalidMove':
+				winner = PLAYERS[TURN === 'X' ? 1 : 0];
+				loser = PLAYERS[TURN === 'X' ? 0 : 1];
 				winnerClass = TURN === 'X' ? 'o-wins' : 'x-wins';
-				outcomeText =  '<span class="danger">Invalid Move</span> by ' + PLAYERS[TURN === 'X' ? 0 : 1] + "<br><br>" + PLAYERS[TURN === 'X' ? 1 : 0] + " Wins";
+				outcomeText =  '<span class="danger">Invalid Move</span> by ' + loser + "<br><br>" + winner + " Wins";
 				overlayDelay = 0;
 				SCORES[TURN === 'X' ? 1 : 0]++;
 				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 				break;
 
 			case 'tie':
+				winner = '';
+				loser = '';
 				winnerClass = '';
 				outcomeText = "It's a Tie";
 				overlayDelay = 400;
 				break;
 		}
+
+		//If the starting players and ending players are the same, save the stats
+		if(STARTING_PLAYERS[0] === PLAYERS[0] && STARTING_PLAYERS[1] === PLAYERS[1]) saveStats(winner,loser);
 
 		$('.game-overlay h3').html(outcomeText).show();
 		$('.game-overlay').addClass(winnerClass).delay(overlayDelay).fadeIn(1000);
@@ -260,6 +311,14 @@ $(function(){
 		$('#timer').removeClass().text(SETTINGS.TIMEOUT);
 	}
 
+	//Refreshes UI to include checkmark next to defeated bots
+	function refreshBotList() {
+		$('.bots li').each(function(i, el){
+			var isDefeated = DEFEATED.indexOf($(el).text()) > -1;
+			$(el).toggleClass('defeated', isDefeated);
+		});
+	}
+
 	function decrementTimer(){
 		TIME--;
 		$('#timer').text(TIME < 10 ? '0' + TIME : TIME);
@@ -270,6 +329,8 @@ $(function(){
 			clearInterval(TIMER);
 		}
 	}
+
+
 
 
 	////**** AJAX REQUESTS ****////
@@ -288,6 +349,10 @@ $(function(){
             //Make sure the game hasn't ended and the board hasn't been reset
 			if (!$('table').hasClass('ended') && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
 		});
+	}
+
+	function updateBotStats(bot, outcome, opponent) {
+		//TO DO Call the backend to update the DB, and return 
 	}
 
 
@@ -336,7 +401,6 @@ $(function(){
 		var newName = $(el.target).val();
 		var playerIdx = $(el.target).hasClass('x') ? 0 : 1;
 		var iconClass = $(el.target).hasClass('x') ? '.fa.x' : '.fa.o';
-		console.log(iconClass);
 
 		//If the name is valid, update
 		if(newName && newName.length) {
@@ -455,6 +519,7 @@ $(function(){
 	
 	////**** RUNTIME SCRIPTS ****////
 	refreshValues();
+	refreshBotList();
 	resizeBoard();
 	setRandomBot();
 
