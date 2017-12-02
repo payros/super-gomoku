@@ -8,25 +8,27 @@ CREATE TABLE bot_stats (
   wins_vs_humans BIGINT NOT NULL,
   wins_vs_bots BIGINT NOT NULL,
   losses_vs_humans BIGINT NOT NULL,
-  losses_vs_bots BIGINT NOT NULL
+  losses_vs_bots BIGINT NOT NULL,
+  ties_vs_humans BIGINT NOT NULL,
+  ties_vs_bots BIGINT NOT NULL
 );
 
 ALTER TABLE bot_stats OWNER TO gomoku;
 
-INSERT INTO bot_stats (name, wins_vs_humans, wins_vs_bots, losses_vs_humans, losses_vs_bots) VALUES
-  ('BestNext', 0, 0, 0, 0),
-  ('BlindGuess', 0, 0, 0, 0),
-  ('Computer', 0, 0, 0, 0),
-  ('HeadlessChicken', 0, 0, 0, 0),
-  ('Hybrid', 0, 0, 0, 0),
-  ('Kevin', 0, 0, 0, 0),
-  ('KunkelOwen', 0, 0, 0, 0),
-  ('LazyMinMax', 0, 0, 0, 0),
-  ('Mikey', 0, 0, 0, 0),
-  ('Mugatu', 0, 0, 0, 0),
-  ('Notemotives', 0, 0, 0, 0),
-  ('Rooster', 0, 0, 0, 0),
-  ('SashankMichael', 0, 0, 0, 0),
-  ('Sigma', 0, 0, 0, 0),
-  ('TeamSinister', 0, 0, 0, 0),
-  ('Theta', 0, 0, 0, 0);
+INSERT INTO bot_stats (name, wins_vs_humans, wins_vs_bots, losses_vs_humans, losses_vs_bots, ties_vs_humans, ties_vs_bots) VALUES
+  ('BestNext', 0, 0, 0, 0, 0, 0),
+  ('BlindGuess', 0, 0, 0, 0, 0, 0),
+  ('Computer', 0, 0, 0, 0, 0, 0),
+  ('HeadlessChicken', 0, 0, 0, 0, 0, 0),
+  ('Hybrid', 0, 0, 0, 0, 0, 0),
+  ('Kevin', 0, 0, 0, 0, 0, 0),
+  ('KunkelOwen', 0, 0, 0, 0, 0, 0),
+  ('LazyMinMax', 0, 0, 0, 0, 0, 0),
+  ('Mikey', 0, 0, 0, 0, 0, 0),
+  ('Mugatu', 0, 0, 0, 0, 0, 0),
+  ('Notemotives', 0, 0, 0, 0, 0, 0),
+  ('Rooster', 0, 0, 0, 0, 0, 0),
+  ('SashankMichael', 0, 0, 0, 0, 0, 0),
+  ('Sigma', 0, 0, 0, 0, 0, 0),
+  ('TeamSinister', 0, 0, 0, 0, 0, 0),
+  ('Theta', 0, 0, 0, 0, 0, 0);

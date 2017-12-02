@@ -40,6 +40,8 @@ BotStats json
    winsVsBots Int
    lossesVsHumans Int
    lossesVsBots Int
+   tiesVsHumans Int
+   tiesVsBots Int
    deriving Show
 |]
 
@@ -113,6 +115,8 @@ postResultsR = do
                        ("won", "bot")    -> runDB ( update ( botId ) [BotStatsWinsVsBots +=. 1] )
                        ("lost", "human") -> runDB ( update ( botId ) [BotStatsLossesVsHumans +=. 1] )
                        ("lost", "bot")   -> runDB ( update ( botId ) [BotStatsLossesVsBots +=. 1] )
+                       ("tied", "human") -> runDB ( update ( botId ) [BotStatsTiesVsHumans +=. 1] )
+                       ("tied", "bot")   -> runDB ( update ( botId ) [BotStatsTiesVsBots +=. 1] )
 
         _ -> error "Invalid input. Example input: {bot: 'KunkelOwen', outcome: 'won', opponent: 'human'}"
 
