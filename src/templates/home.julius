@@ -354,7 +354,14 @@ $(function(){
 	}
 
 	function updateBotStats(bot, outcome, opponent) {
-		//TO DO Call the backend to update the DB, and return 
+		$.post('/results',
+			{
+				'bot':bot,
+				'outcome': outcome,
+				'opponent':opponent,
+			}, function(result) {
+				console.log(result);
+		});
 	}
 
 
@@ -409,7 +416,7 @@ $(function(){
 			PLAYERS[playerIdx] = newName;
 			if(isBot(newName)) {
 				$(el.target).addClass('bot');
-				$(iconClass).fadeIn().css("display","inline");;
+				$(iconClass).fadeIn().css("display","inline");
 			} else {
 				$(el.target).removeClass('bot');
 				$(iconClass).fadeOut();

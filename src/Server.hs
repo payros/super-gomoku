@@ -3,6 +3,13 @@
 {-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeFamilies          #-}
 
+{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+
 import Yesod
 import System.Environment
 import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
@@ -15,15 +22,45 @@ import Data.Aeson
 import Players
 import Types
 
-data GomokuServer = GomokuServer
+-- Database-related imports
+import Control.Monad.IO.Class (liftIO)
+import Control.Monad.Logger (runStderrLoggingT)
+import Database.Persist
+import Database.Persist.Postgresql -- persistent-postgresql
+import Database.Persist.TH
 
+-- Set up model for bot_stats table.
+share
+ [mkPersist sqlSettings, mkMigrate "migrateAll"]
+ [persistLowerCase|
+BotStats json
+   name String
+   UniqueName name
+   winsVsHumans Int
+   winsVsBots Int
+   lossesVsHumans Int
+   lossesVsBots Int
+   deriving Show
+|]
+
+connStr = "host=localhost dbname=gomoku user=gomoku password=gomoku port=5432"
+
+data GomokuServer = GomokuServer ConnectionPool
+instance Yesod GomokuServer
+
+instance YesodPersist GomokuServer where
+    type YesodPersistBackend GomokuServer = SqlBackend
+    runDB action = do
+        GomokuServer pool <- getYesod
+        runSqlPool action pool
 
 mkYesod "GomokuServer" [parseRoutes|
 /             HomeR         GET
 /nextMove     NextMoveR     POST
+/stats        StatsR        GET
+/results      ResultsR      POST
 |]
 
-instance Yesod GomokuServer
 
 -- Default variables accessed by front-end
 boardSize = [10,10] :: [Int]
@@ -47,6 +84,37 @@ getHomeR = defaultLayout $ do
     $(whamletFile "./src/templates/home.hamlet")
     toWidget $(luciusFileReload "./src/templates/home.lucius")
     toWidget $(juliusFileReload "./src/templates/home.julius")
+
+
+-- Sends back all records in bot_stats table.
+getStatsR :: Handler Value
+getStatsR = do
+    stats <- runDB $ selectList [] []
+    returnJson (map entityVal (stats::[Entity BotStats]))
+
+
+-- Marks a win/loss in the database for a bot.
+-- @param bot: Name of a bot
+-- @param outcome: One of either "won" or "lost"
+-- @param opponent: One of either "human" or "bot"
+postResultsR :: Handler ()
+postResultsR = do
+    maybeBot      <- lookupPostParam "bot"
+    maybeOutcome  <- lookupPostParam "outcome"
+    maybeOpponent <- lookupPostParam "opponent"
+    case (maybeBot, maybeOutcome, maybeOpponent) of
+        (Just bot, Just outcome, Just opponent) -> do
+            maybeBotRow <- runDB $ getBy (UniqueName (unpack bot))
+            case (maybeBotRow::(Maybe (Entity BotStats))) of
+               Nothing -> error "We don't have a bot with that name. :("
+               Just (Entity botId bot)   -> do
+                   case (outcome, opponent) of
+                       ("won", "human")  -> runDB ( update ( botId ) [BotStatsWinsVsHumans +=. 1] )
+                       ("won", "bot")    -> runDB ( update ( botId ) [BotStatsWinsVsBots +=. 1] )
+                       ("lost", "human") -> runDB ( update ( botId ) [BotStatsLossesVsHumans +=. 1] )
+                       ("lost", "bot")   -> runDB ( update ( botId ) [BotStatsLossesVsBots +=. 1] )
+
+        _ -> error "Invalid input. Example input: {bot: 'KunkelOwen', outcome: 'won', opponent: 'human'}"
 
 
 -- Given a board, and a bot name, gives the bot's next move.
@@ -118,4 +186,7 @@ normalizePort (port:xs)  = read port :: Int
 main :: IO ()
 main = do
     args <- getArgs
-    warp (normalizePort args) GomokuServer
+    runStderrLoggingT $ withPostgresqlPool connStr 10 $ \pool -> liftIO $ do
+       flip runSqlPersistMPool pool $ do
+           runMigration migrateAll
+       warp (normalizePort args) $ GomokuServer pool
