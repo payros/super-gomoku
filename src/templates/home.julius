@@ -139,7 +139,7 @@ $(function(){
 		// There is a winner
 		} else {
 			if(WBOT) updateBotStats(winner, 'won', LBOT ? 'bot' : 'human');
-			if(LBOT) updateBotStats(winner, 'lost', WBOT ? 'bot' : 'human');
+			if(LBOT) updateBotStats(loser, 'lost', WBOT ? 'bot' : 'human');
 
 			if(!WBOT && LBOT) updateHumanStats(loser);
 		}
@@ -353,6 +353,7 @@ $(function(){
 		});
 	}
 
+	//Updates bot stats in database
 	function updateBotStats(bot, outcome, opponent) {
 		$.post('/results',
 			{
