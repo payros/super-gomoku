@@ -80,6 +80,7 @@ aside.left {
 aside.right {
 	text-align: right;
 	margin-right:1%;
+	min-width:260px;
 }
 
 section {
@@ -551,7 +552,7 @@ h2.scoreboard {
 	}
 }
 
-table {
+table#game-table {
     border-collapse: collapse;
     margin: 0 auto;
 	outline: 2px solid #{borderColor};
@@ -624,7 +625,7 @@ table {
 	}
 }
 
-table.x-turn {
+table#game-table.x-turn {
 	outline: 2px solid #{xColor};
 	box-shadow: 1px 1px 18px hsla(291, 64%, 70%, 0.4);
 
@@ -644,7 +645,7 @@ table.x-turn {
 	}
 }
 
-table.o-turn {	
+table#game-table.o-turn {	
 	outline: 2px solid #{oColor};
 	box-shadow: 1px 1px 18px hsla(174, 100%, 29%, 0.5);
 
@@ -664,14 +665,14 @@ table.o-turn {
 	}
 }
 
-table.ended {
+table#game-table.ended {
 	position: relative;
 	td {
 		cursor:default;
 	}
 }
 
-table.disabled {
+table#game-table.disabled {
 	pointer-events:none;
 }
 
@@ -695,3 +696,177 @@ table.disabled {
 #timer.danger {
 	color:#{dangerColor};
 }
+
+footer {
+	text-align: center;
+    width: 100%;
+    margin-top: 120px;
+    color: #888;
+    font-size: 12px;
+    font-weight: 100;
+    font-style: italic;
+
+    a {
+    	font-style: normal;
+    	text-decoration: none;
+    	color:#222;
+    }
+
+    a:hover {
+    	color:#{activeColor};
+    	text-decoration: underline;
+    }
+}
+
+.ui-dialog {
+	border:none;
+	border-radius:0;
+	padding:0;
+}
+
+.ui-dialog-titlebar {
+	display:none;
+}
+
+#stats-dialog {
+	display:none;
+	background:#fff;
+	color:#333;
+	padding: 15px;
+	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+
+	.dialog-header {
+		span {
+			font-size: 14px;
+		    color: #999;
+		    font-style: italic;
+		}
+
+		a {
+			text-decoration:none;
+		}
+
+		a:hover {
+			color:#{activeColor};
+		}
+
+		a:focus {
+			outline:none;
+		}
+	}
+
+	.fa-close {
+		float:right;
+		cursor:pointer;
+		color:#666;
+		font-size: 24px;
+	}
+
+	.fa-close:hover {
+		color:#333;
+	}
+
+	h2 {
+		margin-top:0;
+		font-weight:100;	
+	}
+
+	h3 {
+		text-align:center;
+		margin:20px 0;
+	}
+
+	.defeated {
+		display:none;
+	}
+
+	.dialog-footer {
+		display: flex;
+	    justify-content: space-around;
+
+	    button {
+		    border-radius: 10px;
+		    margin: 20px 20px 10px;
+		    font-size: 18px;
+		    padding: 10px 45px;
+		    border: 2px solid;
+		}
+
+		button.x {
+			color:#{xColor};
+		}
+
+		button.o {
+			color:#{oColor};
+		}
+
+		button.x:hover {
+			background-color:#{xColor};
+			border-color:#{xColor};
+			color:#fff;
+			box-shadow:none;
+		}
+
+		button.o:hover {
+			background-color:#{oColor};
+			border-color:#{oColor};
+			color:#fff;
+			box-shadow:none;
+		}
+	}
+
+} 
+
+#stats-table {
+	margin:20px auto;
+
+	 th, td:first-child  {
+	    font-weight: 400;
+	    font-size: 16px;
+	    padding: 15px;
+	    text-transform: lowercase;
+	    font-style: italic;
+	    color:#666;
+	}
+
+	td {
+	    font-size: 20px;
+	    text-align: center;
+	    font-weight: bold;
+	    color:#444;
+	}
+
+	td:nth-child(2) {
+		color:#{oColor};
+	}
+
+	td:nth-child(3) {
+		color:#{xColor};
+	}
+
+	td:nth-child(4) {
+		color:#{dangerColor};
+	}
+
+	td:nth-child(5) {
+		color:#{activeColor};
+	}
+}
+
+
+.rank-1 { h2, h3, a { color:#{liColor1}; } }
+.rank-2 { h2, h3, a { color:#{liColor2}; } }
+.rank-3 { h2, h3, a { color:#{liColor3}; } }
+.rank-4 { h2, h3, a { color:#{liColor4}; } }
+.rank-5 { h2, h3, a { color:#{liColor5}; } }
+.rank-6 { h2, h3, a { color:#{liColor6}; } }
+.rank-7 { h2, h3, a { color:#{liColor7}; } }
+.rank-8 { h2, h3, a { color:#{liColor8}; } }
+.rank-9 { h2, h3, a { color:#{liColor9}; } }
+.rank-10 { h2, h3, a { color:#{liColor10}; } }
+.rank-11 { h2, h3, a { color:#{liColor11}; } }
+.rank-12 { h2, h3, a { color:#{liColor12}; } }
+.rank-13 { h2, h3, a { color:#{liColor13}; } }
+.rank-14 { h2, h3, a { color:#{liColor14}; } }
+.rank-15 { h2, h3, a { color:#{liColor15}; } }
+.rank-16 { h2, h3, a { color:#{liColor16}; } }

@@ -19,12 +19,12 @@
         <button id="save-settings"><i class="fa fa-chevron-right"></i> Reset Board
 
     <section class="buttons"> 
-        <button id="random-bot">Random Bot</button>
-        <button id="local-game">Local 2-Player</button>
-        <button id="remote-game" disabled>Remote 2-Player</button>
+        <button id="random-bot">Random Bot
+        <button id="local-game">Local 2-Player
+        <!-- <button id="remote-game" disabled>Remote 2-Player -->
 
 <main>
-    <table class="ended">
+    <table id="game-table" class="ended">
         <div class="game-overlay">
             <div class="overlay-content">
                 <h3>Player1 Wins
@@ -45,3 +45,39 @@
                 <li>#{fst player}
         <h3><i class="fa fa-hand-grab-o"></i> Drag to Select
 
+<footer>Made by <a target="blank" href="http://github.com/payros" title="Go to payros' github profile" >@payros</a> and <a target="blank" href="http://github.com/misaugstad" title="Go to misaugstad's github profile">@misaugstad</a>. <a target="_blank" title="Go to super-gomoku on Github" href="https://github.com/payros/super-gomoku">Fork it on Github</a>
+
+<div id="stats-dialog">
+    <div class="dialog-header">
+        <i class="fa fa-close">
+        <h2>Bot Name <span>by <a href="http://github.com/" title="Go to github profile">@author</a></span>
+        
+
+    <div class="dialog-body">
+        <h3 class="rank">Ranks 0 out of 0
+        <table id="stats-table">
+            <thead>
+                <tr>
+                    <th>
+                    <th>Wins
+                    <th>Ties
+                    <th>Losses
+                    <th>Success
+
+            <tbody>
+                <tr>
+                    <td>Human
+                    <td>0
+                    <td>0
+                    <td>0
+                    <td>0%  
+                <tr>
+                    <td>Bot
+                    <td>0
+                    <td>0
+                    <td>0
+                    <td>0% 
+        <h3 class="defeated"><i class="fa fa-star"></i> You've defeated this bot
+    <div class="dialog-footer">
+        <button title="Set as Player 1" class="x">Player 1
+        <button title="Set as Player 2" class="o">Player 2

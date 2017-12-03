@@ -12,7 +12,7 @@ $(function(){
 
 	////**** GLOBAL VARIABLES ****////
 
-	var TIME, TIMER, STARTING_PLAYERS;
+	var TIME, TIMER, STARTING_PLAYERS, STATS;
 	var BOARD = makeEmptyBoard();
 	var TURN = 'X';
 	var WHO_STARTS_NEXT = 'O';
@@ -114,9 +114,9 @@ $(function(){
 
 		if(isBot()) {
 			botMove();
-			$('table').addClass('disabled');
+			$('#game-table').addClass('disabled');
 		} else {
-			$('table').removeClass('disabled');
+			$('#game-table').removeClass('disabled');
 		}
 	}
 
@@ -150,11 +150,58 @@ $(function(){
 		//If this bot is not already on the list
 		if(DEFEATED.indexOf(loserBot) === -1) {
 			DEFEATED.push(loserBot);
-			console.log(DEFEATED);
 			localStorage.defeated = JSON.stringify(DEFEATED);
-			refreshBotList();
 		}
 	}
+
+	function getStatsByBot(name) {
+		for (var i = 0; i < STATS.length; i++) {
+			if(STATS[i].name === name) return STATS[i];
+		};
+		return {};
+	}
+
+	function compareBots(bot1, bot2) {
+		var b1 = getStatsByBot(bot1);
+		var b2 = getStatsByBot(bot2);
+
+		var b1Points = 0;
+		b1Points += b1.winsVsBots*2;
+		b1Points += b1.winsVsHumans*1;
+		b1Points += b1.lossesVsHumans*(-1);
+		b1Points += b1.lossesVsBots*(-2);
+
+		var b2Points = 0;
+		b2Points += b2.winsVsBots*2;
+		b2Points += b2.winsVsHumans*1;
+		b2Points += b2.lossesVsHumans*(-1);
+		b2Points += b2.lossesVsBots*(-2);
+
+		return b2Points - b1Points;
+
+
+	}
+
+	function getSuccess(stats) {
+		var totalH = stats.winsVsHumans + stats.tiesVsHumans + stats.lossesVsHumans;
+		var totalB = stats.winsVsBots + stats.tiesVsBots + stats.lossesVsBots;
+
+		var successH = totalH ? stats.winsVsHumans/totalH : 0;
+		var successB = totalB ? stats.winsVsBots/totalB : 0;
+		var successT = totalH && totalB ? (totalH+totalB)/2 : totalH+totalB;
+
+		return {
+			humans: successH*100,
+			bots: successB*100,
+			total: successT*100
+		};
+	}
+
+	function getGetOrdinal(n) {
+	    var s=["th","st","nd","rd"],
+	    v=n%100;
+	    return n+(s[(v-20)%10]||s[v]||s[0]);
+	 }
 
 	////**** UI FUNCTIONS ****////
 
@@ -175,7 +222,7 @@ $(function(){
 			$('td').removeClass().text(' ');			
 		}
 
-		$('table, #timer').removeClass().addClass(TURN.toLowerCase() + '-turn');
+		$('#game-table, #timer').removeClass().addClass(TURN.toLowerCase() + '-turn');
 		$('.game-overlay').fadeOut(1000).removeClass('x-wins o-wins');
 
 		startTurn();
@@ -188,7 +235,7 @@ $(function(){
 		$('.game-overlay h3, #play-again').hide();
 		$('#start-game').show();
 		$('.game-overlay').removeClass('x-wins o-wins').fadeIn(1000);
-		$('table').addClass('reset');
+		$('#game-table').addClass('reset');
 	}
 
 	//Resets the game declaring an outcome
@@ -208,7 +255,7 @@ $(function(){
 				SCORES[TURN === 'X' ? 0 : 1]++;
 				$('.score').text(' ' + SCORES[0] + ' x ' + SCORES[1] + ' ');
 				for (var i = 0; i < winningMoves.length; i++) {
-					$('table>tbody>tr:nth-child('+ (winningMoves[i][0]+1) +')>td:nth-child(' + (winningMoves[i][1]+1) + ')').addClass('win');
+					$('#game-table>tbody>tr:nth-child('+ (winningMoves[i][0]+1) +')>td:nth-child(' + (winningMoves[i][1]+1) + ')').addClass('win');
 				}
 				break;
 
@@ -248,20 +295,20 @@ $(function(){
 		$('.game-overlay').addClass(winnerClass).delay(overlayDelay).fadeIn(1000);
 		$('#play-again').show();
 		$('#start-game').hide();
-		$('table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
+		$('#game-table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
 		$('#timer').removeClass();
 	}
 
 	function putMove(move) {
 		if(valid(move)) {
 			BOARD[move[0]][move[1]] = TURN;
-			$('table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass((isBot() ? 'animate ' : '') + TURN.toLowerCase()).text(TURN);
+			$('#game-table>tbody>tr:nth-child('+ (move[0]+1) +')>td:nth-child(' + (move[1]+1) + ')').addClass((isBot() ? 'animate ' : '') + TURN.toLowerCase()).text(TURN);
 
 			var winningMoves = tileWins();
 			if(checkFull() || winningMoves.length) {
 				endGame(winningMoves.length ? 'winningMove' : 'tie', winningMoves);
 			} else {
-				$('table, #timer').toggleClass('o-turn x-turn');
+				$('#game-table, #timer').toggleClass('o-turn x-turn');
 				TURN = TURN === 'X' ? 'O' : 'X';
 				//If the game is not in a reset state, keep going
 			 	startTurn();
@@ -283,10 +330,10 @@ $(function(){
 			}
 			newTable += "</tr>";
 		}
-		$('tbody').html(newTable);
+		$('#game-table tbody').html(newTable);
 
 		//Bind new tiles to event handler
-		$('table td').click(humanMove);
+		$('#game-table td').click(humanMove);
 
 		resizeTiles();
 
@@ -299,7 +346,7 @@ $(function(){
 		totalW = $('main').width();
 		tileSize = totalW/Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1]);
 
-		$('td').css({'width':tileSize, 'height':tileSize, fontSize:tileSize*0.8});
+		$('#game-table td').css({'width':tileSize, 'height':tileSize, fontSize:tileSize*0.8});
 		$('main').delay(200).fadeTo(600, 1);
 	}
 
@@ -315,9 +362,10 @@ $(function(){
 
 	//Refreshes UI to include checkmark next to defeated bots
 	function refreshBotList() {
+		BOTS.sort(compareBots);
 		$('.bots li').each(function(i, el){
-			var isDefeated = DEFEATED.indexOf($(el).text()) > -1;
-			$(el).toggleClass('defeated', isDefeated);
+			var isDefeated = DEFEATED.indexOf(BOTS[i]) > -1;
+			$(el).toggleClass('defeated', isDefeated).text(BOTS[i]);
 		});
 	}
 
@@ -332,7 +380,48 @@ $(function(){
 		}
 	}
 
+	function updateDialog(botname) {
+		var bot = getStatsByBot(botname);
+		var rank = BOTS.indexOf(botname)+1;
+		var oRank = getGetOrdinal(rank);
+		var rankClasses = "";
+		var success = getSuccess(bot);
+		var humanSuccess = (bot.winsVsHumans + bot.lossesVsHumans + bot.tiesVsHumans) ? (success.humans).toFixed() + '%' : 'N/A';
+		var botSuccess = (bot.winsVsBots + bot.lossesVsBots + bot.tiesVsBots) ? (success.bots).toFixed() + '%' : 'N/A';
+		var defeated = DEFEATED.indexOf(botname) > -1;
 
+		for(var i=1; i<=BOTS.length; i++) {
+			rankClasses += ' rank-' + i;
+		}
+
+		$('#stats-dialog').removeClass(rankClasses).addClass('rank-' + rank);
+		$('.dialog-header h2').html(bot.name + ' <span>by <a target="_blank" href="http://github.com/' + bot.author + '" title="Go to ' + bot.author + '\'s github profile">@' + bot.author + '</a></span>');
+		$('.dialog-body .rank').text('Ranks ' + oRank + ' out of ' + BOTS.length);
+		$('#stats-table > tbody > tr:nth-child(1) > td:nth-child(2)').text(bot.winsVsHumans);
+		$('#stats-table > tbody > tr:nth-child(1) > td:nth-child(3)').text(bot.tiesVsHumans);
+		$('#stats-table > tbody > tr:nth-child(1) > td:nth-child(4)').text(bot.lossesVsHumans);
+		$('#stats-table > tbody > tr:nth-child(1) > td:nth-child(5)').text(humanSuccess);
+		$('#stats-table > tbody > tr:nth-child(2) > td:nth-child(2)').text(bot.winsVsBots);
+		$('#stats-table > tbody > tr:nth-child(2) > td:nth-child(3)').text(bot.tiesVsBots);
+		$('#stats-table > tbody > tr:nth-child(2) > td:nth-child(4)').text(bot.lossesVsBots);
+		$('#stats-table > tbody > tr:nth-child(2) > td:nth-child(5)').text(botSuccess);
+		$('.dialog-body .defeated').toggle(defeated);
+
+		//Set Buttons Listeners
+		$('.dialog-footer button.x').unbind().click(function(){
+			console.log('clicked');
+			$('input.x').val(botname);
+			updateName({'target':'input.x'});
+			$( "#stats-dialog" ).dialog( "close" );
+		});
+
+		$('.dialog-footer button.o').unbind().click(function(){
+			$('input.o').val(botname);
+			updateName({'target':'input.o'});
+			$( "#stats-dialog" ).dialog( "close" );
+		});
+
+	}
 
 
 	////**** AJAX REQUESTS ****////
@@ -349,7 +438,7 @@ $(function(){
             var move = eval(rawMove.replace("(","[").replace(")","]"));
             var moveDelay = checkEmpty() ? 1300 : 300;
             //Make sure the game hasn't ended and the board hasn't been reset
-			if (!$('table').hasClass('ended') && !$('table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
+			if (!$('#game-table').hasClass('ended') && !$('#game-table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
 		});
 	}
 
@@ -360,11 +449,18 @@ $(function(){
 				'bot':bot,
 				'outcome': outcome,
 				'opponent':opponent,
-			}, function(result) {
-				console.log(result);
+			}, function(newStats) {
+				STATS = newStats;
+				refreshBotList();
 		});
 	}
 
+	function syncStats() {
+		$.get('/stats', function(stats) {
+			STATS = stats;
+			refreshBotList();
+		});
+	};
 
 	////**** HANDLER FUNCTIONS ****////
 
@@ -438,7 +534,7 @@ $(function(){
 
 	function humanMove(el){
 		var td = el.target;
-		var table = $(td).closest('table');
+		var table = $(td).closest('#game-table');
 		var row = $(td).parent('tr').index();
 		var col = $(td).index();
 
@@ -514,24 +610,39 @@ $(function(){
 		updateName({'target':'input.o'});
 	}
 
+	function showStats(ev) {
+		updateDialog($(ev.target).text());
+		$( "#stats-dialog" ).dialog({
+			show: { effect: "fade", duration: 400 },
+			hide: { effect: "fade", duration: 200 },
+			width:500,
+			resizable:false,
+			modal:true,
+			open: function(){
+	            $('.ui-widget-overlay').click(function(){ $('#stats-dialog').dialog('close'); });
+	        }
+		});
+	}
+
 	////**** EVENT HANDLERS ****////
 
-	$('table td').click(humanMove);
+	$('#game-table td').click(humanMove);
 	$('#save-settings').click(saveSettings);
 	$('#random-bot').click(setRandomBot);
 	$('#local-game').click(setLocal);
 	$('#start-game').click(function(){ startGame(false); });
 	$('#play-again').click(function(){ startGame(true); });
+	$('.dialog-header .fa-close').click(function(){ $( "#stats-dialog" ).dialog( "close" ); });
 	$('input.x, input.o').click(selectAll).keypress(blurInput).focusout(updateName).droppable({classes: { "ui-droppable-active": "droppable" }, drop:botDropped, over:botOver, out:botOut });
-  	$( ".bots li" ).draggable({revert:true, classes: { "ui-draggable-dragging": "highlight" },  start:startedDragging, stop:stoppedDragging });
+  	$( ".bots li" ).click(showStats).draggable({revert:true, classes: { "ui-draggable-dragging": "highlight" },  start:startedDragging, stop:stoppedDragging });
 	$(window).resize(resizeTiles);
 
 	
 	////**** RUNTIME SCRIPTS ****////
 	refreshValues();
-	refreshBotList();
 	resizeBoard();
 	setRandomBot();
+	syncStats();
 
 
 	$('.typeahead').typeahead({
