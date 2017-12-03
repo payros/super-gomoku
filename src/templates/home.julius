@@ -219,7 +219,7 @@ $(function(){
 			WHO_STARTS_NEXT = WHO_STARTS_NEXT === 'X' ? 'O' : 'X';
 			BOARD = makeEmptyBoard();
 
-			$('td').removeClass().text(' ');			
+			$('#game-table td').removeClass().text(' ');			
 		}
 
 		$('#game-table, #timer').removeClass().addClass(TURN.toLowerCase() + '-turn');
