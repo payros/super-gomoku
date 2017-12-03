@@ -19,6 +19,9 @@ extra-deps:
 - shakespeare-text-1.1.0
 - wai-test-3.0.0
 - yesod-routes-1.2.0.7
+- heroku-0.1.2.3
+# - heroku-persistent-0.2.0
+# - persistent-database-url-1.1.0
 
 flags: {}
 

@@ -16,6 +16,7 @@ import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
 import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug, rawJS)
 import Data.Text (unpack)
 import Data.ByteString.Lazy.Char8 (pack)
+--import Database.Persist.URL
 
 import Data.Aeson
 
@@ -36,6 +37,7 @@ share
 BotStats json
    name String
    UniqueName name
+   author String
    winsVsHumans Int
    winsVsBots Int
    lossesVsHumans Int
@@ -99,7 +101,7 @@ getStatsR = do
 -- @param bot: Name of a bot
 -- @param outcome: One of either "won" or "lost"
 -- @param opponent: One of either "human" or "bot"
-postResultsR :: Handler ()
+postResultsR :: Handler Value
 postResultsR = do
     maybeBot      <- lookupPostParam "bot"
     maybeOutcome  <- lookupPostParam "outcome"
@@ -110,15 +112,18 @@ postResultsR = do
             case (maybeBotRow::(Maybe (Entity BotStats))) of
                Nothing -> error "We don't have a bot with that name. :("
                Just (Entity botId bot)   -> do
-                   case (outcome, opponent) of
+                    case (outcome, opponent) of
                        ("won", "human")  -> runDB ( update ( botId ) [BotStatsWinsVsHumans +=. 1] )
                        ("won", "bot")    -> runDB ( update ( botId ) [BotStatsWinsVsBots +=. 1] )
                        ("lost", "human") -> runDB ( update ( botId ) [BotStatsLossesVsHumans +=. 1] )
                        ("lost", "bot")   -> runDB ( update ( botId ) [BotStatsLossesVsBots +=. 1] )
                        ("tied", "human") -> runDB ( update ( botId ) [BotStatsTiesVsHumans +=. 1] )
                        ("tied", "bot")   -> runDB ( update ( botId ) [BotStatsTiesVsBots +=. 1] )
-
-        _ -> error "Invalid input. Example input: {bot: 'KunkelOwen', outcome: 'won', opponent: 'human'}"
+                    stats <- runDB $ selectList [] []
+                    returnJson (map entityVal (stats::[Entity BotStats]))
+        _ -> do 
+            stats <- runDB $ selectList [] []
+            returnJson (map entityVal (stats::[Entity BotStats]))
 
 
 -- Given a board, and a bot name, gives the bot's next move.
