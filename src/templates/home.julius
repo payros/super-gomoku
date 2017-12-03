@@ -21,6 +21,7 @@ $(function(){
 	var BOTS = #{rawJS $ show $ playersList};
 	SETTINGS = localStorage.settings ? JSON.parse(localStorage.settings) : SETTINGS;
 	DEFEATED = localStorage.defeated ? JSON.parse(localStorage.defeated) : DEFEATED;
+	PLAYERS = localStorage.players ? JSON.parse(localStorage.players) : PLAYERS;
 
 	////**** UTILITY FUNCTIONS ****////
 
@@ -357,6 +358,9 @@ $(function(){
 		$('#in_timeout').val(SETTINGS.TIMEOUT);
 		$('#in_tiles_to_win').val(SETTINGS.TILES_TO_WIN);
 
+		$('input.x').val(PLAYERS[0]);
+		$('input.o').val(PLAYERS[1]);
+
 		$('#timer').removeClass().text(SETTINGS.TIMEOUT);
 	}
 
@@ -484,6 +488,7 @@ $(function(){
 		var iconClass = $(this).hasClass('x') ? '.fa.x' : '.fa.o';
 
 		PLAYERS[$(this).hasClass('x') ? 0 : 1] = botName;
+		localStorage.players = JSON.stringify(PLAYERS);
 
 		$(this).val(botName).addClass('bot');
 		$(iconClass).fadeIn().css("display","inline");
@@ -511,6 +516,8 @@ $(function(){
 		//If the name is valid, update
 		if(newName && newName.length) {
 			PLAYERS[playerIdx] = newName;
+			localStorage.players = JSON.stringify(PLAYERS);
+
 			if(isBot(newName)) {
 				$(el.target).addClass('bot');
 				$(iconClass).fadeIn().css("display","inline");
@@ -644,7 +651,7 @@ $(function(){
 	////**** RUNTIME SCRIPTS ****////
 	refreshValues();
 	resizeBoard();
-	setRandomBot();
+	if(!localStorage.players) setRandomBot();
 	syncStats();
 
 
