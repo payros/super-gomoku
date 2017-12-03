@@ -559,11 +559,14 @@ $(function(){
 			$('#in_col').val(SETTINGS.BOARD_DIMENSIONS[1]);
 		}
 
-		if(newTilesToWin && !isNaN(newTilesToWin) && newTilesToWin >= 3 && newTilesToWin <= Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1])) {
-			SETTINGS.TILES_TO_WIN = parseInt(newTilesToWin);
+		if(newTilesToWin && !isNaN(newTilesToWin) && newTilesToWin >= 3) {
+			tilesToWin = Math.min(newTilesToWin, Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1]));
 		} else {
-			$('#in_tiles_to_win').val(Math.min(SETTINGS.TILES_TO_WIN, Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1])));
+			tilesToWin = Math.min(SETTINGS.TILES_TO_WIN, Math.max(SETTINGS.BOARD_DIMENSIONS[0],SETTINGS.BOARD_DIMENSIONS[1]))
 		}
+		
+		$('#in_tiles_to_win').val(tilesToWin);
+		SETTINGS.TILES_TO_WIN = parseInt(tilesToWin);
 
 		if(newTimeout && !isNaN(newTimeout) && newTimeout >= 0) {
 			SETTINGS.TIMEOUT = parseInt(newTimeout);
