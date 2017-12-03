@@ -14,9 +14,8 @@ import Yesod
 import System.Environment
 import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
 import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug, rawJS)
-import Data.Text (unpack, Text)
+import Data.Text (unpack)
 import Data.ByteString.Lazy.Char8 (pack, toStrict)
-import Web.Heroku.Postgres
 import Control.Exception (try)
 
 import Data.Aeson

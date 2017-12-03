@@ -26,6 +26,7 @@ Time and knowledge permitting, this project will:
 If you would like to deploy this project on your local machine (and maybe come up with your own bot strategy), you can following these steps:
 
 * Clone/Download the project
+* install `postgres` and set local DB credentials under the environment variable `DATABASE_URL`
 * Run `stack install` in the project's root directory
 * Run `gomoku` (You may have to add the bin directory to your shell path)
 * Open a browser window and visit `localhost:4000` or `127.0.0.1:4000`
