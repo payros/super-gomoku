@@ -133,8 +133,8 @@ $(function(){
 
 		//It's a tie
 		if(winner === '' && loser === '') {
-			if(P1BOT) updateBotStats(P1, 'tied', 'bot');
-			if(P2BOT) updateBotStats(P2, 'tied', 'bot');
+			if(P1BOT) updateBotStats(P1, 'tied', LBOT ? 'bot' : 'human');
+			if(P2BOT) updateBotStats(P2, 'tied', LBOT ? 'bot' : 'human');
 
 		// There is a winner
 		} else {
