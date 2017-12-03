@@ -7,20 +7,20 @@ You can play the current version of Super Gomoku [here](https://super-gomoku.her
 ### Main Goals
 When Completed, this project will let users:
 
-* Play Gomoku in three modes:
+- [x] Play Gomoku in three modes:
 
-  - [x] Human X Human (Local)
-  - [x] Human X Bot
-  - [x] Bot X Bot
+  * Human X Human (Local)
+  * Human X Bot
+  * Bot X Bot
 
-* Define the board dimensions and number of aligned pieces needed to win
+- [x] Define the board dimensions and number of aligned pieces needed to win
 
 ### Strech Goals
 Time and knowledge permitting, this project will:
 
-*  Save Browser Session (Configs, Score, Players)
-*  Persist Bot Stats (Wins, Ties, Losses)
-*  Include Remote Human X Human
+- [x]  Save Browser Session (Configs, Score, Players)
+- [x]  Persist Bot Stats (Wins, Ties, Losses)
+- [ ]  Include Remote Human X Human
 
 ### Local Installation
 If you would like to deploy this project on your local machine (and maybe come up with your own bot strategy), you can following these steps:
