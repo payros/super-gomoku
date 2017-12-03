@@ -14,9 +14,10 @@ import Yesod
 import System.Environment
 import Text.Lucius (luciusFile, luciusFileReload, luciusFileDebug)
 import Text.Julius (juliusFile, juliusFileReload, juliusFileDebug, rawJS)
-import Data.Text (unpack)
-import Data.ByteString.Lazy.Char8 (pack)
---import Database.Persist.URL
+import Data.Text (unpack, Text)
+import Data.ByteString.Lazy.Char8 (pack, toStrict)
+import Web.Heroku.Postgres
+import Control.Exception (try)
 
 import Data.Aeson
 
@@ -46,8 +47,6 @@ BotStats json
    tiesVsBots Int
    deriving Show
 |]
-
-connStr = "host=localhost dbname=gomoku user=gomoku password=gomoku port=5432"
 
 data GomokuServer = GomokuServer ConnectionPool
 instance Yesod GomokuServer
@@ -192,10 +191,15 @@ normalizePort :: [String] -> Int
 normalizePort [] = 4000
 normalizePort (port:xs)  = read port :: Int
 
+normalizeDBUrl :: Either IOError String -> ConnectionString
+normalizeDBUrl (Left _) = "host=localhost dbname=gomoku user=gomoku password=gomoku port=5432"
+normalizeDBUrl (Right url) = toStrict $ pack url
+
 main :: IO ()
 main = do
     args <- getArgs
-    runStderrLoggingT $ withPostgresqlPool connStr 10 $ \pool -> liftIO $ do
+    connStr <- try $ getEnv "DATABASE_URL"
+    runStderrLoggingT $ withPostgresqlPool (normalizeDBUrl connStr) 10 $ \pool -> liftIO $ do
        flip runSqlPersistMPool pool $ do
            runMigration migrateAll
        warp (normalizePort args) $ GomokuServer pool
