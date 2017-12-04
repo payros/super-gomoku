@@ -236,6 +236,7 @@ $(function(){
 		$('.game-overlay h3, #play-again').hide();
 		$('#start-game').show();
 		$('.game-overlay').removeClass('x-wins o-wins').fadeIn(1000);
+		$('#game-table, #timer').removeClass();
 		$('#game-table').addClass('reset');
 	}
 
@@ -413,7 +414,6 @@ $(function(){
 
 		//Set Buttons Listeners
 		$('.dialog-footer button.x').unbind().click(function(){
-			console.log('clicked');
 			$('input.x').val(botname);
 			updateName({'target':'input.x'});
 			$( "#stats-dialog" ).dialog( "close" );
@@ -432,17 +432,30 @@ $(function(){
 
 	//Get a move from a Bot
 	function botMove(){
-		$.post('/nextMove',
-			{
+		$.ajax({
+			type:'POST',
+			url:'/nextMove',
+			data:{
 				'player':PLAYERS[TURN === 'X' ? 0 : 1],
 				'board':String(BOARD),
 				'turn':TURN,
 				'settings':JSON.stringify(SETTINGS)
-			}, function(rawMove){
-            var move = eval(rawMove.replace("(","[").replace(")","]"));
-            var moveDelay = checkEmpty() ? 1300 : 300;
-            //Make sure the game hasn't ended and the board hasn't been reset
-			if (!$('#game-table').hasClass('ended') && !$('#game-table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
+			}, 
+			success: function(rawMove){
+	            var move = eval(rawMove.replace("(","[").replace(")","]"));
+	            var moveDelay = checkEmpty() ? 1300 : 300;
+	            //Make sure the game hasn't ended and the board hasn't been reset
+				if (!$('#game-table').hasClass('ended') && !$('#game-table').hasClass('reset')) setTimeout(function(){putMove(move)}, moveDelay);
+			}, 
+			error: function(err){
+				//The Bot probably messed something up
+				if(err.status === 500) {
+					putMove([21,21]);
+				//Something else happened. Reset the game
+				} else {
+					resizeBoard();
+				}
+			}
 		});
 	}
 
