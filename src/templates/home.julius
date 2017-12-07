@@ -360,6 +360,8 @@ $(function(){
 
 		$('input.x').val(PLAYERS[0]);
 		$('input.o').val(PLAYERS[1]);
+		updateName({'target':'input.o'});
+		updateName({'target':'input.x'});
 
 		$('#timer').removeClass().text(SETTINGS.TIMEOUT);
 	}
