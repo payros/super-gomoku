@@ -615,12 +615,12 @@ table#game-table {
 	}
 
     td.x.win {
-    	background-color: #{winXColor};
+    	background-color: #{winXColor} !important;
     	border:2px solid #{winXColor};
     }
 
     td.o.win {
-    	background-color: #{winOColor};
+    	background-color: #{winOColor} !important;
     	border:2px solid #{winOColor};
     }
 
