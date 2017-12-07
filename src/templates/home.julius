@@ -12,7 +12,7 @@ $(function(){
 
 	////**** GLOBAL VARIABLES ****////
 
-	var TIME, TIMER, STARTING_PLAYERS, STATS;
+	var TIME, TIMER, STARTING_PLAYERS, STATS, BOTS_TO_BEAT;
 	var BOARD = makeEmptyBoard();
 	var TURN = 'X';
 	var WHO_STARTS_NEXT = 'O';
@@ -152,6 +152,7 @@ $(function(){
 		if(DEFEATED.indexOf(loserBot) === -1) {
 			DEFEATED.push(loserBot);
 			localStorage.defeated = JSON.stringify(DEFEATED);
+			$('#next-bot').css({'display':'inline-block'});
 		}
 	}
 
@@ -179,8 +180,6 @@ $(function(){
 		b2Points += b2.lossesVsBots*(-2);
 
 		return b2Points - b1Points;
-
-
 	}
 
 	function getSuccess(stats) {
@@ -225,6 +224,7 @@ $(function(){
 
 		$('#game-table, #timer').removeClass().addClass(TURN.toLowerCase() + '-turn');
 		$('.game-overlay').fadeOut(1000).removeClass('x-wins o-wins');
+		$('#next-bot').hide();
 
 		startTurn();
 	}
@@ -233,7 +233,7 @@ $(function(){
 	function resetGame() {
 		stopTimer();
 
-		$('.game-overlay h3, #play-again').hide();
+		$('.game-overlay h3, #play-again, #next-bot').hide();
 		$('#start-game').show();
 		$('.game-overlay').removeClass('x-wins o-wins').fadeIn(1000);
 		$('#game-table, #timer').removeClass();
@@ -292,10 +292,9 @@ $(function(){
 
 		//If the starting players and ending players are the same, save the stats
 		if(STARTING_PLAYERS[0] === PLAYERS[0] && STARTING_PLAYERS[1] === PLAYERS[1]) saveStats(winner,loser);
-
 		$('.game-overlay h3').html(outcomeText).show();
 		$('.game-overlay').addClass(winnerClass).delay(overlayDelay).fadeIn(1000);
-		$('#play-again').show();
+		$('#play-again').css({'display':'inline-block'});
 		$('#start-game').hide();
 		$('#game-table').addClass('ended ' + winnerClass).removeClass('o-turn x-turn');
 		$('#timer').removeClass();
@@ -368,6 +367,8 @@ $(function(){
 	//Refreshes UI to include checkmark next to defeated bots
 	function refreshBotList() {
 		BOTS.sort(compareBots);
+		if(!BOTS_TO_BEAT) BOTS_TO_BEAT = BOTS.slice().reverse(); //Copy the array so we know which bot comes next
+		if(!localStorage.players) setStarterBot();
 		$('.bots li').each(function(i, el){
 			var isDefeated = DEFEATED.indexOf(BOTS[i]) > -1;
 			$(el).toggleClass('defeated', isDefeated).text(BOTS[i]);
@@ -608,6 +609,21 @@ $(function(){
 		updateName({'target':playerClass});
 	}
 
+	function setStarterBot() {
+		var playerClass = 'input.o';
+  		var bot = BOTS_TO_BEAT[0];
+		$(playerClass).val(bot);
+		updateName({'target':playerClass});		
+	}
+
+	function nextBot() {
+		var playerClass = 'input.o';
+		nextIdx = BOTS_TO_BEAT.indexOf($(playerClass).val())+1;
+		$(playerClass).val(BOTS_TO_BEAT[nextIdx]);
+		updateName({'target':playerClass});
+		startGame(true);		
+	}
+
 	//Sets the second player to a Local Human
 	function setLocal() {
 		if($('input.x').hasClass('bot')) {
@@ -655,6 +671,7 @@ $(function(){
 	$('#local-game').click(setLocal);
 	$('#start-game').click(function(){ startGame(false); });
 	$('#play-again').click(function(){ startGame(true); });
+	$('#next-bot').click(nextBot);
 	$('.dialog-header .fa-close').click(function(){ $( "#stats-dialog" ).dialog( "close" ); });
 	$('input.x, input.o').click(selectAll).keypress(blurInput).focusout(updateName).droppable({classes: { "ui-droppable-active": "droppable" }, drop:botDropped, over:botOver, out:botOut });
   	$( ".bots li" ).click(showStats).draggable({delay: 200, revert:true, classes: { "ui-draggable-dragging": "highlight" },  start:startedDragging, stop:stoppedDragging });
@@ -664,7 +681,6 @@ $(function(){
 	////**** RUNTIME SCRIPTS ****////
 	refreshValues();
 	resizeBoard();
-	if(!localStorage.players) setRandomBot();
 	syncStats();
 
 

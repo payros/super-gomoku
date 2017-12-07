@@ -525,9 +525,13 @@ h2.scoreboard {
     	color:#{activeColor};
     }
 
-    #play-again {
-    	display:none;
-    	margin:0 auto;
+    #play-again, #next-bot {
+    	margin: 20px;
+    	min-width: 180px;
+    }
+
+    #next-bot {
+    	margin-top:20px;
     }
 
     #start-game {

@@ -29,6 +29,7 @@
             <div class="overlay-content">
                 <h3>Player1 Wins
                 <button id="play-again">Play Again <i class="fa fa-repeat"></i>
+                <button id="next-bot">Next Bot <i class="fa fa-step-forward"></i>
                 <button id="start-game">Start Game
         <tbody>
             $forall row <- boardRows
