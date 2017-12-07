@@ -584,6 +584,18 @@ table#game-table {
 		width:50px;	    
 	}
 
+	tr:nth-child(odd) {
+		td:nth-child(even) {
+			background:#f7f7f7;
+		}
+	}
+
+	tr:nth-child(even) {
+		td:nth-child(odd) {
+			background:#f7f7f7;
+		}
+	}
+
 	td.x {
     	color: #{xColor};
     	background:#fff;
@@ -638,10 +650,23 @@ table#game-table.x-turn {
 		transform: rotateY(180deg);
 	}
 
+
 	td:not(.o):not(.x)::before {
 		content:'X';
 		color:#{bgColor};
 		transition: color 0s 0.125s;
+	}
+
+	tr:nth-child(odd) {
+		td:nth-child(even):not(.o):not(.x)::before {
+			color:#f7f7f7;
+		}
+	}
+
+	tr:nth-child(even) {
+		td:nth-child(odd):not(.o):not(.x)::before {
+			color:#f7f7f7;
+		}
 	}
 
 	td:not(.o):not(.x):hover::before {
