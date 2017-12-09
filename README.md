@@ -30,3 +30,11 @@ If you would like to deploy this project on your local machine (and maybe come u
 * Run `stack install` in the project's root directory
 * Run `gomoku` (You may have to add the bin directory to your shell path)
 * Open a browser window and visit `localhost:4000` or `127.0.0.1:4000`
+
+### Text-based terminal version, implemented entirely in Haskell.
+The text-based version is run in the terminal, using the (mostly) untouched original code written by [Niki Vazou](https://github.com/nikivazou). This version may be more useful for future students who are writing bots, since the entire implementation is in Haskell. In the web version, checking who wins and such is done in Javascript.
+
+#### Local Installation
+Installation is the same as for the web version, though the executable is `gomoku-text` instead of `gomoku`.
+
+However, if you want to avoid installing `postgres`, you should be able to comment out the lines related to the `gomoku` executable in [gomoku.cabal](https://github.com/payros/super-gomoku/blob/master/gomoku.cabal). Then you should be able to run `stack install` and run `gomoku-text` without installing `postgres`. I haven't tested this, however.
